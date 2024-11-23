@@ -1,0 +1,36 @@
+{% extends "layout.html" %}
+
+{% block title %}Reporte de Deudores{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <h1 class="text-center mb-4">Reporte de Deudores</h1>
+    
+    {% if report_data %}
+        <table class="table table-bordered table-striped mt-4">
+            <thead>
+                <tr>
+                    <th>Nombre</th>
+                    <th>DNI</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for jinete in report_data %}
+                <tr>    
+                    <td>{{ jinete.nombre }} {{ jinete.apellido }}</td>
+                    <td>{{ jinete.dni }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        
+        <div class="mt-4">
+            <a href="{{ url_for('reportes.reportes_deudores_pdf') }}" class="btn btn-primary">
+                Descargar Reporte PDF
+            </a>
+        </div>
+    {% else %}
+        <p>No hay deudores para mostrar.</p>
+    {% endif %}
+</div>
+{% endblock %}

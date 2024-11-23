@@ -1,0 +1,158 @@
+{% extends "layout.html" %}
+
+{% block title %}Cobros{% endblock %}
+{% block content %}
+<header class="title-container">
+    <h1 id="page-title" class="mt-4">Cobros</h1>
+    <nav aria-label="volver al menu de Jinete/Amazona">
+        <ul>
+            <li><a class="btn btn-primary" href="{{ url_for('jinete_amazona.show', id=jinete_id) }}" aria-label="Volver a la ficha de Jinete o Amazona">Volver a ficha de J&A</a></li>
+        </ul>
+    </nav>
+</header>
+
+<main class="container">
+    <section id="filtros" class="mb-4">
+        <h2>Filtrar Cobros</h2>
+        <form action="{{ url_for('cobro.index', jinete_id=jinete_id) }}" method="GET" class="row g-3">
+            <div class="col-md-3">
+                <label for="fechaMin" class="form-label">Fecha Desde:</label>
+                <input type="date" class="form-control" id="fechaMin" name="fechaMin" value="{{ request.args.get('fechaMin', '') }}" min="1994-01-01" max="{{ current_date }}" aria-describedby="dateMinHelp">
+                <small id="dateMinHelp" class="form-text text-muted">Seleccione la fecha inicial.</small>
+            </div>
+
+            <div class="col-md-3">
+                <label for="fechaMax" class="form-label">Fecha Hasta:</label>
+                <input type="date" class="form-control" id="fechaMax" name="fechaMax" value="{{ request.args.get('fechaMax', '') }}" min="1994-01-01" max="{{ current_date }}" aria-describedby="dateMaxHelp">
+                <small id="dateMaxHelp" class="form-text text-muted">Seleccione la fecha final.</small>
+            </div>
+
+            <div>
+                <label for="medio_de_pago" class="form-label">Medio de Pago:</label>
+                <select class="form-select" id="medio_de_pago" name="medio_de_pago" aria-describedby="medioPagoHelp">
+                    <option value="">-- Seleccione --</option>
+                    {% for medio in medio_de_pago %}
+                    <option value="{{ medio.id }}" {% if request.args.get('medio_de_pago') == medio.id %}selected{% endif %}>
+                        {{ medio.nombre }}
+                    </option>
+                    {% endfor %}
+                </select>
+                <small id="medioPagoHelp" class="form-text text-muted">Seleccione un medio de pago.</small>
+            </div>
+
+            <div class="col-md-3">
+                <label for="empleado.nombre" class="form-label">Nombre del Empleado:</label>
+                <input type="text" class="form-control" id="empleado.nombre" name="empleado.nombre" value="{{ request.args.get('empleado.nombre', '') }}" aria-describedby="nombreEmpleadoHelp">
+                <small id="nombreEmpleadoHelp" class="form-text text-muted">Ingrese el nombre del empleado.</small>
+            </div>
+
+            <div class="col-md-3">
+                <label for="empleado.apellido" class="form-label">Apellido del Empleado:</label>
+                <input type="text" class="form-control" id="empleado.apellido" name="empleado.apellido" value="{{ request.args.get('empleado.apellido', '') }}" aria-describedby="apellidoEmpleadoHelp">
+                <small id="apellidoEmpleadoHelp" class="form-text text-muted">Ingrese el apellido del empleado.</small>
+            </div>
+
+            <div class="col-md-3">
+                <label for="orden" class="form-label">Ordenar por Fecha:</label>
+                <select class="form-select" id="orden" name="orden" aria-describedby="ordenHelp">
+                    <option value="asc" {% if request.args.get('orden') == 'asc' %}selected{% endif %}>Ascendente</option>
+                    <option value="desc" {% if request.args.get('orden') == 'desc' %}selected{% endif %}>Descendente</option>
+                </select>
+                <small id="ordenHelp" class="form-text text-muted">Seleccione el orden de la fecha.</small>
+            </div>
+
+            <div class="col-auto", style="margin-top: 2.5rem">
+                <button type="submit" class="btn btn-primary" aria-label="Filtrar cobros">Filtrar</button>
+            </div>
+        </form>
+    </section>
+
+    <section class="cobros-list">
+        <table class="table-responsive table-bordered" aria-labelledby="page-title">
+            <thead>
+                <tr>
+                    <th>Empleado asociado</th>
+                    <th>Apellido Empleado</th>
+                    <th>Monto</th>
+                    <th>Fecha</th>
+                    <th>Medio de Pago</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for cobro, empleado, medio in cobros.items %}
+                <tr>
+                    <td>{{ empleado.nombre }}</td>
+                    <td>{{ empleado.apellido }}</td>
+                    <td>${{ cobro.monto }}</td>  
+                    <td>{{ cobro.fecha.strftime('%d/%m/%Y')}}</td>
+                    <td>{{ medio.nombre }}</td>
+                    <td>
+                        <a href="{{ url_for('cobro.show', jinete_id=jinete_id, cobro_id=cobro.id) }}" class="btn btn-info" aria-label="Ver detalles del cobro">Ver</a>
+                        <a href="{{ url_for('cobro.update_cobro', cobro_id=cobro.id, jinete_id=jinete_id) }}" class="btn btn-warning" aria-label="Editar cobro">Editar</a>
+                        
+                        <form action="{{ url_for('cobro.delete', jinete_id=jinete_id, cobro_id=cobro.id) }}" method="POST" style="display:inline;">
+                            <button type="submit" class="btn btn-danger" aria-label="Eliminar cobro" onclick="return confirm('¿Estás seguro de que querés eliminar este cobro?');">Eliminar</button>
+                        </form>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+        <nav aria-label="Paginación de cobros">
+            <ul class="pagination">
+                {% if page > 1 %}
+                    <li class="page-item">
+                        <a class="page-link" href="?page={{ page - 1 }}" aria-label="Anterior">Anterior</a>
+                    </li>
+                {% else %}
+                    <li class="page-item disabled">
+                        <span class="page-link" aria-hidden="true">Anterior</span>
+                    </li>
+                {% endif %}
+
+                {% if start > 1 %}
+                    <li class="page-item">
+                        <a class="page-link" href="?page=1">1</a>
+                    </li>
+                    {% if start > 2 %}
+                        <li class="page-item disabled">
+                            <span class="page-link">...</span>
+                        </li>
+                    {% endif %}
+                {% endif %}
+
+                {% for p in range(start, end + 1) %}
+                    <li class="page-item {% if p == page %}active{% endif %}">
+                        <a class="page-link" href="?page={{ p }}" aria-label="Página {{ p }}">{{ p }}</a>
+                    </li>
+                {% endfor %}
+
+                {% if end < total_pages %}
+                    {% if end < total_pages - 1 %}
+                        <li class="page-item disabled">
+                            <span class="page-link">...</span>
+                        </li>
+                    {% endif %}
+                    <li class="page-item">
+                        <a class="page-link" href="?page={{ total_pages }}">{{ total_pages }}</a>
+                    </li>
+                {% endif %}
+
+                {% if page < total_pages %}
+                    <li class="page-item">
+                        <a class="page-link" href="?page={{ page + 1 }}" aria-label="Siguiente">Siguiente</a>
+                    </li>
+                {% else %}
+                    <li class="page-item disabled">
+                        <span class="page-link" aria-hidden="true">Siguiente</span>
+                    </li>
+                {% endif %}
+            </ul>
+        </nav>
+    </section>
+    <script src="{{ url_for('static', filename='js/create_cobro_validaciones.js') }}"></script>
+</main>
+
+{% endblock %}

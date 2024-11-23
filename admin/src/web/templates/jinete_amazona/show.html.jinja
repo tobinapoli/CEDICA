@@ -1,0 +1,254 @@
+{% extends "layout.html" %}
+
+{% block title %}Detalles del Jinete/Amazona{% endblock %}
+
+{% block content %}
+<h1 class="text-center mb-4">Detalles del Jinete/Amazona</h1>
+<main class="container">
+    
+
+    <div class="container">
+
+        <div class="btn-group mb-3" role="group" aria-label="Secciones">
+            <button id="btn-info" type="button" class="btn btn-secondary" onclick="showSection('info')">Información General</button>
+            <button id="btn-docs" type="button" class="btn btn-secondary" onclick="showSection('docs')">Documentos</button>
+            <button id="btn-familiares" type="button" class="btn btn-secondary" onclick="showSection('familiares')">Familiares Responsables</button>
+        </div>
+        
+        <div id="section-info">
+    <div class="row">
+        <div class="col-md-8">
+            <h2>Datos del Jinete/Amazona</h2>
+            <table class="table-responsive table-bordered">
+                <tr>
+                    <th>Nombre:</th>
+                    <td>{{ jinete_amazona.nombre }}</td>
+                </tr>
+                <tr>
+                    <th>Apellidos:</th>
+                    <td>{{ jinete_amazona.apellido }}</td>
+                </tr>
+                <tr>
+                    <th>DNI:</th>
+                    <td>{{ jinete_amazona.dni }}</td>
+                </tr>
+                <tr>
+                    <th>Teléfono:</th>
+                    <td>{{ jinete_amazona.telefono }}</td>
+                </tr>
+                <tr>
+                    <th>Fecha de Nacimiento:</th>
+                    <td>{{ jinete_amazona.fecha_nacimiento }}</td>
+                </tr>
+                <tr>
+                    <th>Tiene Deuda:</th>
+                    <td>{{ "✔️" if jinete_amazona.tiene_deuda else "❌" }}</td>
+                </tr>
+                <tr>
+                    <th>Becado:</th>
+                    <td>{{ "✔️" if jinete_amazona.becado else "❌" }}</td>
+                </tr>
+                <tr>
+                    <th>Porcentaje de Beca:</th>
+                    <td>{{ jinete_amazona.porcentaje_beca or 'No tiene' }}</td>
+                </tr>
+                <tr>
+                    <th>Profesionales Asociados:</th>
+                    <td>{{ jinete_amazona.profesionales_asociados }}</td>
+                </tr>
+                <tr>
+                    <th>Obra social:</th>
+                    <td>{{ situacion_previsional.obra_social or 'No tiene' }}</td>
+                </tr>
+                <tr>
+                    <th>Numero afiliado:</th>
+                    <td>{{ situacion_previsional.numero_afiliado or 'No tiene' }}</td>
+                </tr>
+                <tr>
+                    <th>Posee curatela:</th>
+                    <td>{{ "✔️" if situacion_previsional.posee_curatela else  "❌" }}</td>
+                </tr>
+                <tr>
+                    <th>Observaciones:</th>
+                    <td>{{ situacion_previsional.observaciones or 'No tiene' }}</td>
+                </tr>
+                <tr>
+                    <th>Profesor:</th>
+                    <td>{{ profesor.nombre }} {{ profesor.apellido }}</td>
+                </tr>
+                <tr>
+                    <th>Auxiliar:</th>
+                    <td>{{ auxiliar.nombre }} {{ auxiliar.apellido }}</td>
+                </tr>
+                <tr>
+                    <th>Conductor:</th>
+                    <td>{{ conductor.nombre }} {{ conductor.apellido }}</td>
+                </tr>
+                    <th>Diagnóstico de Discapacidad:</th>
+                    <td>{{ jinete_amazona.diagnostico_discapacidad.descripcion or 'No tiene' }}</td>
+                </tr>
+                <tr>
+                    <th>Institución Escolar:</th>
+                    <td>{{ jinete_amazona.institucion_escolar.nombre or 'No asiste' }}</td>
+                </tr>
+                <tr>
+                    <th>Tipo de Pensión:</th>
+                    <td>{{ jinete_amazona.tipo_pension.name or 'No tiene' }}</td>
+                </tr>
+            </table>
+        </div>
+
+        <div class="col-md-4">
+            <h2>Domicilio</h2>
+            <table class="table-responsive table-bordered">
+                <tr>
+                    <th>Calle:</th>
+                    <td>{{ direccion.calle }}</td>
+                </tr>
+                <tr>
+                    <th>Número:</th>
+                    <td>{{ direccion.numero }}</td>
+                </tr>
+                <tr>
+                    <th>Piso:</th>
+                    <td>{{ direccion.piso or 'N/A' }}</td>
+                </tr>
+                <tr>
+                    <th>Departamento:</th>
+                    <td>{{ direccion.departamento or 'N/A' }}</td>
+                </tr>
+                <tr>
+                    <th>Localidad:</th>
+                    <td>{{ direccion.localidad }}</td>
+                </tr>
+                <tr>
+                    <th>Provincia:</th>
+                    <td>{{ direccion.provincia.name }}</td>
+                </tr>
+            </table>
+
+            <h2>Contacto de Emergencia</h2>
+            <table class="table-responsive table-bordered">
+                <tr>
+                    <th>Nombre:</th>
+                    <td>{{ contacto.nombre }}</td>
+                </tr>
+                <tr>
+                    <th>Teléfono:</th>
+                    <td>{{ contacto.telefono }}</td>
+                </tr>
+            </table>
+        </div>
+
+        <div class="actions mt-4">
+            <a href="{{ url_for('jinete_amazona.update', id=jinete_amazona.id) }}" class="btn btn-primary">Editar</a>
+            <form action="{{ url_for('jinete_amazona.delete', id=jinete_amazona.id) }}" method="POST" style="display:inline;">
+                <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('¿Estás seguro que deseas eliminar este jinete/amazona?');">Eliminar</button>
+            </form>
+            <a href="{{ url_for('jinete_amazona.index') }}" class="btn btn-secondary">Volver</a>
+            <a href="{{ url_for('cobro.index', jinete_id=jinete_amazona.id) }}" class="btn btn-info">Ver Cobros</a>
+    </div>
+
+                
+            </div>
+                    
+        </div>
+    </div>
+        </div>
+
+
+
+    <div id="section-docs" style="display: none;">
+        <section>
+            <h2>Documentos</h2>
+            <a href="{{ url_for('documentos.create_doc_jinete', jinete_id = jinete_amazona.id) }}" class="btn btn-primary">Agregar Documento</a>
+            {% if documentos %}
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th>Nombre del Archivo</th>
+                            <th>Tipo de Documento</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for documento in documentos %}
+                            <tr>
+                                <td>{{ documento.filename }}</td>
+                                <td>{{ documento.document_type.value }}</td>
+                                <td>
+                                    {% if documento.is_link %}
+                                        <a href="{{ documento.filename }}" target="_blank" class="btn btn-sm btn-primary">Abrir enlace</a>
+                                    {% else %}
+                                        <a href="{{ url_for('documentos.show', document_id = documento.id) }}" target="_blank" class="btn btn-sm btn-info">Ver</a>
+                                        <a href="{{ url_for('documentos.download', document_id = documento.id) }}" download class="btn btn-sm btn-success">Descargar</a>
+                                    {% endif %}
+                                    <a href="{{ url_for('documentos.delete_jinete', document_id = documento.id) }}" class="btn btn-sm btn-danger">Eliminar</a>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            {% else %}
+                <p>No hay documentos asociados a este jinete.</p>
+            {% endif %}
+        </section>
+    </div>
+
+    <div id="section-familiares" style="display: none;">
+        <h2>Familiares Responsables</h2>
+        {% if familiares %}
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th>Nombre</th>
+                        <th>Parentesco</th>
+                        <th>Teléfono</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for familiar in familiares %}
+                        <tr>
+                            <td>{{ familiar.nombre }}</td>
+                            <td>{{ familiar.parentesco }}</td>
+                            <td>{{ familiar.celular }}</td>
+                            <td>
+                                <a href="{{ url_for('familiares_responsables.update', id=familiar.id) }}" class="btn btn-sm btn-primary">Editar</a>
+                                <a href="{{ url_for('familiares_responsables.delete', id=familiar.id) }}" class="btn btn-sm btn-danger">Eliminar</a>
+                                 <a href="{{ url_for('familiares_responsables.show', id=familiar.id) }}" class="btn btn-sm btn-info">Ver</a>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        {% else %}
+            <p>No hay familiares responsables asociados a este jinete/amazona.</p>
+            {% endif %}
+            <a href="{{ url_for('familiares_responsables.create', jinete_id=jinete_amazona.id)}}" class="btn btn-sm btn-primary">Agregar nuevo familiar responsable</a>
+        </div>
+    </main>
+    
+    <script>
+        function showSection(section) {
+            // Oculta todas las secciones
+            document.getElementById('section-info').style.display = 'none';
+            document.getElementById('section-docs').style.display = 'none';
+            document.getElementById('section-familiares').style.display = 'none';
+    
+            // Muestra la sección seleccionada
+            document.getElementById('section-' + section).style.display = 'block';
+    
+            // Resalta el botón activo
+            const buttons = document.querySelectorAll('.btn-group .btn');
+            buttons.forEach(btn => {
+                btn.classList.remove('btn-primary');
+                btn.classList.add('btn-secondary');
+            });
+            document.getElementById('btn-' + section).classList.remove('btn-secondary');
+            document.getElementById('btn-' + section).classList.add('btn-primary');
+        }
+    </script>
+    
+    {% endblock %}
+    

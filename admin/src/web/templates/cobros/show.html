@@ -1,0 +1,53 @@
+{% extends "layout.html" %}
+
+{% block title %}Detalles del Cobro{% endblock %}
+
+{% block content %}
+<div class="container">
+    <header class="title-container">
+        <h1 id="page-title" class="mt-4">Detalles del Cobro</h1>
+        <nav aria-label="volver al menu de Cobros">
+            <ul>
+                <li><a class="btn btn-primary" href="{{ url_for('cobro.index', jinete_id=jinete_id) }}" aria-label="Volver a la lista de cobros">Volver a Cobros</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <div class="row">
+        <div class="col-md-8">
+            <table class="table-responsive table-bordered" aria-describedby="detalles-cobro">
+                <caption id="detalles-cobro">Información detallada del cobro seleccionado</caption>
+                <tr>
+                    <th>Empleado Asociado</th>
+                    <td>{{ empleado.nombre }} {{ empleado.apellido }}</td>
+                </tr>
+                <tr>
+                    <th>Monto</th>
+                    <td>${{ cobro.monto }}</td>
+                </tr>
+                <tr>
+                    <th>Fecha</th>
+                    <td>{{ cobro.fecha.strftime('%d/%m/%Y') }}</td>
+                </tr>
+                <tr>
+                    <th>Medio de Pago</th>
+                    <td>{{ medio_de_pago.nombre }}</td>
+                </tr>
+                <tr>
+                    <th>Observaciones</th>
+                    <td>{{ cobro.observaciones or 'N/A' }}</td>
+                </tr>
+            </table>
+        </div>
+    </div>
+
+    <div class="actions mt-4" aria-label "Acciones">
+        <a href="{{ url_for('cobro.update_cobro', cobro_id=cobro.id, jinete_id=jinete_id) }}" class="btn btn-warning" aria-label="Editar cobro">Editar</a>
+        <form action="{{ url_for('cobro.delete', jinete_id=jinete_id, cobro_id=cobro.id) }}" method="POST" style="display:inline;">
+            <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('¿Estás seguro de que querés eliminar este cobro?');" aria-label="Eliminar cobro">Eliminar</button>
+        </form>
+        
+        <a href="{{ url_for('cobro.index', jinete_id=jinete_id) }}" class="btn btn-secondary" aria-label="Volver a la lista de cobros">Volver</a>
+    </div>
+</div>
+{% endblock %}

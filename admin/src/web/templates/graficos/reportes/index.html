@@ -1,0 +1,21 @@
+{% extends "layout.html" %}
+
+{% block title %}Estadísticas y Reportes{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <h1 class="text-center mb-4">Estadísticas y Reportes</h1>
+    <h2>Selecciona un Reporte</h2>
+    <div class="btn-group " role="group" aria-label="Secciones">
+        <a href="{{ url_for('reportes.reportes_cobro') }}" class="btn btn-primary">Reporte de Cobros</a>
+    </div>
+
+    <div class="btn-group " role="group" aria-label="Secciones">
+        <a href="{{ url_for('reportes.reporte_deudores') }}" class="btn btn-primary">Reporte de Jinetes con Deuda</a>
+    </div>
+
+    <div class="btn-group " role="group" aria-label="Secciones">
+        <a href="{{ url_for('reportes.reporte_propuestas') }}" class="btn btn-primary">Reporte de Propuesta</a>
+    </div>
+</div>
+{% endblock %}

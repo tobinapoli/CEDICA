@@ -1,0 +1,24 @@
+{% extends "layout.html" %}
+
+{% block title %}Editar Consulta{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <h1 class="mb-4">Editar Consulta</h1>
+    <form method="post" action="{{ url_for('contactos.update', id=consulta.id) }}">
+        <div class="mb-3">
+            <label for="estado" class="form-label">Estado:</label>
+            <select name="estado" id="estado" class="form-select">
+                <option value="pendiente" {% if consulta.estado == 'pendiente' %}selected{% endif %}>Pendiente</option>
+                <option value="resuelto" {% if consulta.estado == 'resuelto' %}selected{% endif %}>Resuelto</option>
+                <option value="en curso" {% if consulta.estado == 'en curso' %}selected{% endif %}>En curso</option>
+            </select>
+        </div>
+        <div class="mb-3">
+            <label for="comentario" class="form-label">Comentario:</label>
+            <textarea name="comentario" id="comentario" class="form-control">{% if consulta.comentario_interno %}{{ consulta.comentario_interno }}{% else %}No hay{% endif %}</textarea>
+        </div>
+        <button type="submit" class="btn btn-primary">Actualizar</button>
+    </form>
+</div>
+{% endblock %}

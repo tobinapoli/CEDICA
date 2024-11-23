@@ -1,0 +1,74 @@
+{% extends "layout.html" %}
+
+{% block title %}Actualizar Pago{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <h1>Actualizar Pago</h1>
+    <form method="POST" action="{{ url_for('pago.update', id=pago.id) }}">
+        <!-- Campo Monto -->
+        <div class="mb-3">
+            <label for="monto" class="form-label" aria-label="Campo de monto">Monto</label>
+            <input type="number" step="0.01" class="form-control" id="monto" name="monto" value="{{ pago.monto }}" required aria-required="true">
+        </div>
+
+        <!-- Campo Descripción -->
+        <div class="mb-3">
+            <label for="descripcion" class="form-label" aria-label="Campo de descripción">Descripción</label>
+            <input type="text" class="form-control" id="descripcion" name="descripcion" value="{{ pago.descripcion }}" aria-label="Ingrese la descripción del pago">
+        </div>
+
+        <!-- Campo Tipo de Pago -->
+        <div class="mb-3">
+            <label for="tipo_de_pago" class="form-label" aria-label="Campo de tipo de pago">Tipo de Pago</label>
+            <select class="form-select" id="tipo_de_pago" name="tipo_de_pago" required aria-required="true" onchange="toggleBeneficiario()">
+                <option value="">Seleccione un tipo de pago</option>
+                <option value="Honorarios" {% if pago.tipo_de_pago == 'Honorarios' %}selected{% endif %}>Honorarios</option>
+                <option value="Proveedor" {% if pago.tipo_de_pago == 'Proveedor' %}selected{% endif %}>Proveedor</option>
+                <option value="Gastos varios" {% if pago.tipo_de_pago == 'Gastos varios' %}selected{% endif %}>Gastos varios</option>
+            </select>
+        </div>
+
+        <!-- Campo Beneficiario -->
+        <div class="mb-3" id="beneficiario-field" {% if pago.tipo_de_pago != 'Honorarios' %}style="display: none;"{% endif %}>
+            <label for="beneficiario" class="form-label">Beneficiario</label>
+            <select class="form-select" id="beneficiario" name="beneficiario" aria-label="campo de beneficiario">
+                <option value="">Seleccione un beneficiario</option>
+                {% for empleado in empleados %}
+                    <option value="{{ empleado.id }}" {% if pago.beneficiario_id == empleado.id %}selected{% endif %}>
+                        {{ empleado.nombre }} {{ empleado.apellido }}
+                    </option>
+                {% endfor %}
+            </select>
+        </div>
+
+
+        <!-- Campo Fecha -->
+        <div class="mb-3">
+            <label for="fecha" class="form-label" aria-label="Campo de fecha de pago">Fecha de Pago</label>
+            <input type="date" class="form-control" id="fecha" name="fecha" value="{{ pago.fecha.strftime('%Y-%m-%d') }}" required min="1994-01-01" required aria-required="true">
+        </div>
+
+        <button type="submit" class="btn btn-primary" aria-label="Botón para actualizar el pago">Actualizar Pago</button>
+    </form>
+</div>
+
+<script>
+    function toggleBeneficiario() {
+        const tipoPago = document.getElementById('tipo_de_pago').value;
+        const beneficiarioField = document.getElementById('beneficiario-field');
+
+        if (tipoPago === 'Honorarios') {
+            beneficiarioField.style.display = 'block';
+        } else {
+            beneficiarioField.style.display = 'none';
+            document.getElementById('beneficiario').value = ''; // Limpiar el campo si no es necesario
+        }
+    }
+
+    document.addEventListener('DOMContentLoaded', function() {
+    var today = new Date().toISOString().split('T')[0];
+    document.getElementById("fecha").setAttribute('max', today);
+    });
+</script>
+{% endblock %}

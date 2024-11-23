@@ -1,0 +1,220 @@
+{% extends "layout.html" %}
+
+{% block title %}Actualizar Empleado{% endblock %}
+
+{% block content %}
+
+    <h1>Actualizar Empleado</h1>
+
+    <form class="form-container" action="{{ url_for('empleado.update', id=empleado.id) }}" method="POST" aria-label="Formulario de actualización de empleado" onsubmit="return validarFormulario()">
+        <h2>Empleado</h2>
+        <div class="form-group">
+            <label for="name">Nombre:</label>
+            <input type="text" id="name" name="name" value="{{ empleado.nombre }}" required aria-label="Campo de nombre del empleado">
+        </div>
+
+        <div class="form-group">
+            <label for="apellidos">Apellidos:</label>
+            <input type="text" id="apellidos" name="apellidos" value="{{ empleado.apellido }}" required aria-label="Campo de apellidos del empleado">
+        </div>
+
+        <div class="form-group">
+            <label for="dni">DNI:</label>
+            <input type="text" id="dni" name="dni" value="{{ empleado.dni }}" required aria-label="Campo de DNI del empleado">
+        </div>
+        <div class="form-group">
+            <label for="email">Email:</label>
+            <input type="email" id="email" name="email" value="{{ empleado.email }}" required aria-label="Campo de email del empleado">
+        </div>
+        <div class="form-group">
+            <label for="telefono">Teléfono:</label>
+            <input type="text" id="telefono" name="telefono" value="{{ empleado.telefono }}" required aria-label="Campo de teléfono del empleado">
+        </div>
+
+        <div class="form-group">
+            <label for="puesto">Puesto:</label>
+            <select id="puesto" name="puesto" class="form-control" required aria-label="Seleccionar puesto del empleado">
+                <option value="">-- Seleccione --</option>
+                {% for puesto in puestos %}
+                    <option value="{{ puesto.id }}" 
+                        {% if puesto.id == empleado.puesto_id %}
+                            selected
+                        {% endif %}>
+                        {{ puesto.nombre }}
+                    </option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label for="profesion">Profesion:</label>
+            <select id="profesion" name="profesion" class="form-control" required aria-label="Seleccionar profesión del empleado">
+                <option value="">-- Seleccione --</option>
+                {% for profesion_option in profesiones %}
+                    <option value="{{ profesion_option }}" 
+                        {% if form_data.profesion is defined and profesion_option == form_data.profesion %}
+                            selected
+                        {% elif profesion_option == empleado.profesion %}
+                            selected
+                        {% endif %}>
+                        {{ profesion_option }}
+                    </option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label for="fecha_ingreso">Fecha de Ingreso:</label>
+            <input type="date" id="fecha_ingreso" name="fecha_ingreso" value="{{ empleado.fecha_ingreso }}" required aria-label="Campo de fecha de ingreso del empleado">
+        </div>
+        
+        <div class="form-group">
+            <label for="fecha_egreso">Fecha de Egreso:</label>
+            <input type="date" id="fecha_egreso" name="fecha_egreso" value="{{ empleado.fecha_egreso }}" aria-label="Campo de fecha de egreso del empleado">
+        </div>
+
+        <div class="form-group">
+            <label for="obra_social">Obra Social:</label>
+            <input type="text" id="obra_social" name="obra_social" value="{{ empleado.obra_social }}" required aria-label="Campo de obra social del empleado">
+        </div>
+
+        <div class="form-group">
+            <label for="numero_afiliado">Número de Afiliado:</label>
+            <input type="text" id="numero_afiliado" name="numero_afiliado" value="{{ empleado.numero_afiliado }}" required aria-label="Campo de número de afiliado del empleado">
+        </div>
+
+        <div class="form-group">
+            <label for="condicion">Condición:</label>
+            <input type="text" id="condicion" name="condicion" value="{{ empleado.condicion }}" required aria-label="Campo de condición del empleado">
+        </div>
+
+        <div class="form-group">
+            <label for="activo">Activo:</label>
+            <select id="activo" name="activo" class="form-control" required aria-label="Seleccionar estado de actividad del empleado">
+                <option value="True" {% if empleado.activo == True %}selected{% endif %}>Sí</option>
+                <option value="False" {% if empleado.activo == False %}selected{% endif %}>No</option>
+            </select>
+        </div>
+        <!-- Sección de domicilio -->
+        <h2>Domicilio</h2>
+        <div class="form-group">
+            <label for="calle">Calle:</label>
+            <input type="text" id="calle" name="calle" value="{{ domicilio.calle }}" required aria-label="Campo de calle del domicilio">
+        </div>
+        <div class="form-group">
+            <label for="numero">Número:</label>
+            <input type="text" id="numero" name="numero" value="{{ domicilio.numero }}" required aria-label="Campo de número del domicilio">
+        </div>
+        <div class="form-group">
+            <label for="depto">Departamento:</label>
+            <input type="text" id="depto" name="depto" value="{{ domicilio.depto }}" aria-label="Campo de departamento del domicilio">
+        </div>
+        <div class="form-group">
+            <label for="localidad">Localidad:</label>
+            <input type="text" id="localidad" name="localidad" value="{{ domicilio.localidad }}" required aria-label="Campo de localidad del domicilio">
+        </div>
+        <div class="form-group">
+            <label for="provincia">Provincia</label>
+            <select id="provincia" name="provincia" class="form-control provincia">
+                <option value="">Seleccione una opción</option>
+                {% for prov in provincias %}
+                    <option value="{{ prov.name }}" 
+                        {% if prov.name == domicilio.provincia.name %}selected{% endif %}>
+                        {{ prov.value }}
+                    </option>
+                {% endfor %}
+            </select>
+            <span id="provincia-error"></span>
+        </div>
+
+        <!-- Sección de contacto de emergencia -->
+        <h2>Contacto de Emergencia</h2>
+        <div class="form-group">
+            <label for="contacto_nombre">Nombre del Contacto:</label>
+            <input type="text" id="contacto_nombre" name="contacto_nombre" value="{{ contacto.nombre }}" required aria-label="Campo de nombre del contacto de emergencia">
+        </div>
+        <div class="form-group">
+            <label for="contacto_telefono">Teléfono del Contacto:</label>
+            <input type="text" id="contacto_telefono" name="contacto_telefono" value="{{ contacto.telefono }}" required aria-label="Campo de teléfono del contacto de emergencia">
+        </div>
+        <div>
+            <button type="submit" class="btn-primary" aria-label="Actualizar información del empleado">Actualizar</button>
+        </div>
+    </form>
+    <script>
+        function validarFormulario() {
+            var soloLetras = /^[a-zA-Z\s]+$/;
+            var soloNumeros = /^[0-9]+$/;
+
+            // Validar Nombre
+            var nombre = document.getElementById('name').value;
+            if (!soloLetras.test(nombre)) {
+                alert('El nombre solo debe contener letras.');
+                return false;
+            }
+
+            // Validar Apellidos
+            var apellidos = document.getElementById('apellidos').value;
+            if (!soloLetras.test(apellidos)) {
+                alert('El apellido solo debe contener letras.');
+                return false;
+            }
+
+            // Validar DNI
+            var dni = document.getElementById('dni').value;
+            if (!soloNumeros.test(dni) || dni.length > 8) {
+                alert('El DNI solo debe contener números y tener una longitud máxima de 8 caracteres.');
+                return false;
+            }
+
+            // Validar Número de Afiliado
+            var numeroAfiliado = document.getElementById('numero_afiliado').value;
+            if (!soloNumeros.test(numeroAfiliado)) {
+                alert('El número de afiliado solo debe contener números.');
+                return false;
+            }
+
+            // Validar Teléfono
+            var telefono = document.getElementById('telefono').value;
+            if (!soloNumeros.test(telefono)) {
+                alert('El teléfono solo debe contener números.');
+                return false;
+            }
+
+            // Validar Número de Domicilio
+            var numeroDomicilio = document.getElementById('numero').value;
+            if (!soloNumeros.test(numeroDomicilio)) {
+                alert('El número de domicilio solo debe contener números.');
+                return false;
+            }
+
+            // Validar Nombre del Contacto de Emergencia
+            var contactoNombre = document.getElementById('contacto_nombre').value;
+            if (!soloLetras.test(contactoNombre)) {
+                alert('El nombre del contacto de emergencia solo debe contener letras.');
+                return false;
+            }
+
+            // Validar Teléfono del Contacto de Emergencia
+            var contactoTelefono = document.getElementById('contacto_telefono').value;
+            if (!soloNumeros.test(contactoTelefono)) {
+                alert('El teléfono del contacto de emergencia solo debe contener números.');
+                return false;
+            }
+
+            // Validar fechas de ingreso y egreso
+            var fechaIngreso = document.getElementById('fecha_ingreso').value;
+            var fechaEgreso = document.getElementById('fecha_egreso').value;
+
+            if (fechaEgreso) {
+                if (new Date(fechaEgreso) <= new Date(fechaIngreso)) {
+                    alert('La fecha de egreso debe ser mayor a la fecha de ingreso.');
+                    return false;
+                }
+            }
+
+            // Si todo está bien, se permite el envío del formulario
+            return true;
+        }
+    </script>
+{% endblock %}

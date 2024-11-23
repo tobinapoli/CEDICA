@@ -1,0 +1,182 @@
+{% extends "layout.html" %}
+
+{% block title %}Lista de Empleados{% endblock %}
+
+{% block content %}
+<header class="title-container">
+    <h1 class="mt-4">Lista de Empleados</h1>
+    <nav class="mb-4">
+        <ul>
+            <li><a class="btn btn-primary" href="{{ url_for('empleado.create') }}" aria-label="Agregar nuevo empleado">Agregar Empleado</a></li>
+        </ul>
+    </nav>
+</header>
+
+<main class="container">
+    </div>
+    
+    <section id="filtros" class="mb-4">
+        <h2>Filtrar y Ordenar Empleados</h2>
+        <form action="{{ url_for('empleado.index') }}" method="GET" class="row g-3" aria-label="Formulario para filtrar y ordenar empleados">
+            <div class="col-md-3">
+                <label for="nombre" class="form-label">Nombre:</label>
+                <input type="text" class="form-control" id="nombre" name="nombre" value="{{ request.args.get('nombre', '') }}" aria-label="Nombre del empleado">
+            </div>
+
+            <div class="col-md-3">
+                <label for="apellido" class="form-label">Apellido:</label>
+                <input type="text" class="form-control" id="apellido" name="apellido" value="{{ request.args.get('apellido', '') }}" aria-label="Apellido del empleado">
+            </div>
+
+            <div class="col-md-3">
+                <label for="dni" class="form-label">DNI:</label>
+                <input type="text" class="form-control" id="dni" name="dni" value="{{ request.args.get('dni', '') }}" aria-label="DNI del empleado">
+            </div>
+
+            <div class="col-md-3">
+                <label for="email" class="form-label">Email:</label>
+                <input type="email" class="form-control" id="email" name="email" value="{{ request.args.get('email', '') }}" aria-label="Email del empleado">
+            </div>
+
+            <div class="col-md-3">
+                <label for="puesto" class="form-label">Puesto:</label>
+                <select id="puesto" name="puesto" class="form-select" aria-label="Selecciona el puesto del empleado">
+                    <option value="">-- Seleccione --</option>
+                    {% for puesto in puestos %}
+                        <option value="{{ puesto.nombre }}" {% if request.args.get('puesto') == puesto.nombre %}selected{% endif %}>
+                            {{ puesto.nombre }}
+                        </option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div class="col-md-3">
+                <label for="ordenar_por" class="form-label">Ordenar por:</label>
+                <select id="ordenar_por" name="ordenar_por" class="form-select" aria-label="Selecciona el criterio para ordenar empleados">
+                    <option value="nombre" {% if request.args.get('ordenar_por') == 'nombre' %}selected{% endif %}>Nombre</option>
+                    <option value="apellido" {% if request.args.get('ordenar_por') == 'apellido' %}selected{% endif %}>Apellido</option>
+                    <option value="fecha_creacion" {% if request.args.get('ordenar_por') == 'fecha_creacion' %}selected{% endif %}>Fecha de creación</option>
+                </select>
+            </div>
+
+            <div class="col-md-3">
+                <label for="orden" class="form-label">Orden:</label>
+                <select id="orden" name="orden" class="form-select" aria-label="Selecciona el orden de la lista">
+                    <option value="asc" {% if request.args.get('orden') == 'asc' %}selected{% endif %}>Ascendente</option>
+                    <option value="desc" {% if request.args.get('orden') == 'desc' %}selected{% endif %}>Descendente</option>
+                </select>
+            </div>
+
+            <div class="col-auto" style="margin-top: 3rem;">
+                <button type="submit" class="btn btn-primary" aria-label="Buscar empleados">Buscar</button>
+            </div>
+        </form>
+    </section>
+
+    <section id="empleados">
+        {% if empleados %}
+            <div class="table-responsive">
+                <table class="table-responsive table-bordered" aria-label="Lista de empleados">
+                    <thead>
+                        <tr>
+                            <th>Activo</th>
+                            <th>Nombre</th>
+                            <th>Apellido</th>
+                            <th>DNI</th>
+                            <th>Email</th>
+                            <th>Puesto</th>
+                            <th>Fecha de Ingreso</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for empleado in empleados %}
+                        <tr>
+                            <td>
+                                {% if empleado.activo %}
+                                    <span class="badge bg-success" aria-label="Estado: Activo">Activo</span>
+                                {% else %}
+                                    <span class="badge bg-danger" aria-label="Estado: Inactivo">Inactivo</span>
+                                {% endif %}
+                            </td>
+                            <td>{{ empleado.nombre }}</td>
+                            <td>{{ empleado.apellido }}</td>
+                            <td>{{ empleado.dni }}</td>
+                            <td>{{ empleado.email }}</td>
+                            <td>{{ empleado.puesto.nombre }}</td>
+                            <td>{{ empleado.fecha_ingreso.strftime('%d-%m-%Y') }}</td>
+
+                            <td>
+                                <a class="btn btn-info btn-sm" href="{{ url_for('empleado.show', id=empleado.id) }}" aria-label="Ver detalles del empleado {{ empleado.nombre }}">Ver</a>
+                                {% if empleado.activo %}
+                                    <form action="{{ url_for('empleado.delete', id=empleado.id) }}" method="POST" style="display:inline;">
+                                        <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('¿Estás seguro que deseas eliminar este empleado?');" aria-label="Eliminar empleado {{ empleado.nombre }}">Eliminar</button>
+                                    </form>
+                                {% else %}
+                                    <form action="{{ url_for('empleado.restore', id=empleado.id) }}" method="POST" style="display:inline;">
+                                        <button type="submit" class="btn btn-success btn-sm" onclick="return confirm('¿Estás seguro que deseas restaurar este empleado?');" aria-label="Restaurar empleado {{ empleado.nombre }}">Restaurar</button>
+                                    </form>
+                                {% endif %}
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+                <nav aria-label="Page navigation example">
+                    <ul class="pagination">
+                        {% if page > 1 %}
+                            <li class="page-item">
+                                <a class="page-link" href="?page={{ page - 1 }}" aria-label="Previous">Anterior</a>
+                            </li>
+                        {% else %}
+                            <li class="page-item disabled">
+                                <span class="page-link">Anterior</span>
+                            </li>
+                        {% endif %}
+                        
+                        {% if start > 1 %}
+                            <li class="page-item">
+                                <a class="page-link" href="?page=1">1</a>
+                            </li>
+                            {% if start > 2 %}
+                                <li class="page-item disabled">
+                                    <span class="page-link">...</span>
+                                </li>
+                            {% endif %}
+                        {% endif %}
+                        
+                        {% for p in range(start, end + 1) %}
+                            <li class="page-item {% if p == page %}active{% endif %}">
+                                <a class="page-link" href="?page={{ p }}">{{ p }}</a>
+                            </li>
+                        {% endfor %}
+                        
+                        {% if end < total_pages %}
+                            {% if end < total_pages - 1 %}
+                                <li class="page-item disabled">
+                                    <span class="page-link">...</span>
+                                </li>
+                            {% endif %}
+                            <li class="page-item">
+                                <a class="page-link" href="?page={{ total_pages }}">{{ total_pages }}</a>
+                            </li>
+                        {% endif %}
+                        
+                        {% if page < total_pages %}
+                            <li class="page-item">
+                                <a class="page-link" href="?page={{ page + 1 }}" aria-label="Next">Siguiente</a>
+                            </li>
+                        {% else %}
+                            <li class="page-item disabled">
+                                <span class="page-link">Siguiente</span>
+                            </li>
+                        {% endif %}
+                    </ul>
+                </nav>
+            </div>
+        {% else %}
+            <p>No hay empleados registrados.</p>
+        {% endif %}
+    </section>
+</main>
+{% endblock %}

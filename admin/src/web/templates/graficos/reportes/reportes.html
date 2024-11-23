@@ -1,0 +1,83 @@
+{% extends "layout.html" %}
+
+{% block content %}
+<div class="container mt-4">
+    <h1>Reporte de Cobros</h1>
+    
+    <form method="post" class="mb-4">
+        {{ form.hidden_tag() }}
+        <div>
+            {{ form.fecha_inicio.label }}<br>
+            {{ form.fecha_inicio(class_="form-control") }}
+            {% for error in form.fecha_inicio.errors %}
+                <span class="text-danger">{{ error }}</span>
+            {% endfor %}
+        </div>
+        <div>
+            {{ form.fecha_fin.label }}<br>
+            {{ form.fecha_fin(class_="form-control") }}
+            {% for error in form.fecha_fin.errors %}
+                <span class="text-danger">{{ error }}</span>
+            {% endfor %}
+        </div>
+        <div>
+            {{ form.jinete_nombre.label }}<br>
+            {{ form.jinete_nombre(class_="form-control") }}
+            {% for error in form.jinete_nombre.errors %}
+            <span class="text-danger">{{ error }}</span>
+            {% endfor %}
+        </div>
+        <div>
+            {{ form.jinete_dni.label }}<br>
+            {{ form.jinete_dni(class_="form-control") }}
+            {% for error in form.jinete_dni.errors %}
+            <span class="text-danger">{{ error }}</span>
+            {% endfor %}
+        </div>
+        <div>
+        <button type="submit" class="btn btn-primary">Generar Reporte</button>
+        </div>
+    </form>
+
+    {% if report_data %}
+        <h2>Resultados del Reporte</h2>
+
+
+        <p><strong>Total de Montos: </strong>${{ total_monto }}</p>
+
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>Fecha</th>
+                    <th>Monto</th>
+                    <th>Medio de Pago</th>
+                    <th>Empleado</th>
+                    <th>Jinete</th>
+                    <th>DNI</th>
+                    <th>Observaciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for item in report_data %}
+                    <tr>
+                        <td>{{ item.fecha }}</td>
+                        <td>${{ item.monto }}</td>
+                        <td>{{ item.medio_de_pago }}</td>
+                        <td>{{ item.empleado }}</td>
+                        <td>{{ item.nombre_jinete }}</td>
+                        <td>{{ item.dni_jinete }}</td>
+                        <td>{{ item.observaciones }}</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+        <div id="grafico" style="width: 100%; height: 400px;"></div>
+        <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+        <script>
+            var grafico = "{{ grafico | safe }}";
+            Plotly.newPlot('grafico', grafico.data, grafico.layout,{ displayModeBar: false, responsive: true });
+        </script>
+    {% endif %}
+</div>
+{% endblock %}

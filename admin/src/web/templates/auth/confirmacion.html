@@ -1,0 +1,16 @@
+{% extends "layout.html" %}
+{% block title %}Confirmación de Registro{% endblock %}
+{% block head %}
+    {{ super() }}
+{% endblock %}
+{% block content %}
+<section class="confirmation-section">
+    <div class="confirmation-container">
+        <h1>¡Registro casi finalizado!</h1>
+        <p>Tu cuenta ha sido registrada y quedo pendiente de aprobacion</p>
+        <div class="button-group">
+            <a href="{{ url_for('auth.login') }}" class="btn btn-primary">Iniciar sesión</a>
+        </div>
+    </div>
+</section>
+{% endblock %}

@@ -1,0 +1,116 @@
+{% extends "layout.html" %}
+{% block title %}Ejemplar {{ ejemplar.nombre }}{% endblock %}
+{% block content %}
+<header class="title-container">
+    <h1 class="mt-4">{{ ejemplar.nombre }}</h1>
+    <nav class="mb-4">
+        <ul>
+            <li><a class="btn btn-primary" href="{{ url_for('ejemplares.index') }}" aria-label="Volver a la lista de ejemplares">Volver a la lista</a></li>
+        </ul>
+    </nav>
+</header>
+<main class="container">
+    <div class="btn-group mb-3" role="group" aria-label="Secciones">
+        <button id="btn-info" type="button" class="btn btn-secondary" onclick="showSection('info')" aria-label="Mostrar información general del ejemplar">Información General</button>
+        <button id="btn-docs" type="button" class="btn btn-secondary" onclick="showSection('docs')" aria-label="Mostrar documentos asociados al ejemplar">Documentos</button>
+    </div>
+
+    <div id="section-info">
+        <section>
+            <h2>Datos del Ejemplar</h2>
+            <dl>
+                <dt>Nombre</dt>
+                <dd>{{ ejemplar.nombre }}</dd>
+                <dt>Fecha de nacimiento</dt>
+                <dd>{{ ejemplar.fecha_nacimiento.strftime('%d/%m/%Y') }}</dd>
+                <dt>Género</dt>
+                <dd>{{ ejemplar.genero }}</dd>
+                <dt>Raza</dt>
+                <dd>{{ ejemplar.raza }}</dd>
+                <dt>Pelaje</dt>
+                <dd>{{ ejemplar.pela }}</dd>
+                <dt>Tipo de Adquisición</dt>
+                <dd>
+                    {{ "Compra" if ejemplar.tipo_de_adquisicion == 'Compra' else "Donación" }}
+                </dd>
+                <dt>Sede</dt>
+                <dd>{{ ejemplar.sede }}</dd>
+            </dl>
+        </section>
+        <section>
+            <h2>Entrenadores</h2>
+            <ul>
+                {% for entrenador in ejemplar.entrenadores %}
+                    <li>{{ entrenador.nombre }} {{ entrenador.apellido }} {{ entrenador.dni }}</li>
+                {% else %}
+                    <li>No hay entrenadores asociados a este ejemplar.</li>
+                {% endfor %}
+            </ul>
+            <div class="actions mt-4">
+                <a href="{{ url_for('ejemplares.update', id=ejemplar.id) }}" class="btn btn-primary" aria-label="Editar este ejemplar">Editar</a>
+                <form action="{{ url_for('ejemplares.delete', id=ejemplar.id) }}" method="POST" style="display:inline;">
+                    <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('¿Estás seguro que deseas eliminar este ejemplar?');" aria-label="Eliminar este ejemplar">Eliminar</button>
+                </form>
+            </div>
+        </section>
+    </div>
+
+    <div id="section-docs" style="display: none;">
+        <section>
+            <h2>Documentos</h2>
+            <a href="{{ url_for('documentos.create_doc_ejemplar', ejemplar_id=ejemplar.id) }}" class="btn btn-primary" aria-label="Agregar documento asociado a este ejemplar">Agregar Documento</a>
+            {% if documentos %}
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th>Nombre del Archivo</th>
+                            <th>Tipo de Documento</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for documento in documentos %}
+                            <tr>
+                                <td>{{ documento.filename }}</td>
+                                <td>{{ documento.document_type.value }}</td>
+                                <td>
+                                    {% if documento.is_link %}
+                                        <a href="{{ documento.filename }}" target="_blank" class="btn btn-sm btn-primary" aria-label="Abrir enlace del documento">Abrir enlace</a>
+                                    {% else %}
+                                        <a href="{{ url_for('documentos.show', document_id=documento.id) }}" target="_blank" class="btn btn-sm btn-info" aria-label="Ver documento asociado">Ver</a>
+                                        <a href="{{ url_for('documentos.download', document_id=documento.id) }}" download class="btn btn-sm btn-success" aria-label="Descargar documento asociado">Descargar</a>
+                                    {% endif %}
+                                    <a href="{{ url_for('documentos.delete', document_id=documento.id) }}" class="btn btn-sm btn-danger" aria-label="Eliminar documento asociado">Eliminar</a>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            {% else %}
+                <p>No hay documentos asociados a este ejemplar.</p>
+            {% endif %}
+        </section>
+    </div>
+</main>
+
+<script>
+    function showSection(section) {
+        document.getElementById('section-info').style.display = (section === 'info') ? 'block' : 'none';
+        document.getElementById('section-docs').style.display = (section === 'docs') ? 'block' : 'none';
+
+        // Actualizar el estado de los botones
+        document.getElementById('btn-info').classList.toggle('btn-primary', section === 'info');
+        document.getElementById('btn-info').classList.toggle('btn-secondary', section !== 'info');
+        document.getElementById('btn-docs').classList.toggle('btn-primary', section === 'docs');
+        document.getElementById('btn-docs').classList.toggle('btn-secondary', section !== 'docs');
+    }
+
+    // Mostrar la sección de información por defecto
+    showSection('info');
+
+    // Mostrar la sección de documentos si se accede con el fragmento
+    if (window.location.hash === '#section-docs') {
+        showSection('docs');
+    }
+</script>
+{% endblock %}

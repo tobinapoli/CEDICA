@@ -1,0 +1,303 @@
+{% extends "layout.html" %}
+
+{% block title %}Lista de Ejemplares{% endblock %}
+
+{% block content %}
+<header class="title-container">
+    <h1 class="mt-4">Lista de Ejemplares</h1>
+    <nav class="mb-4">
+        <ul>
+            <li><a class="btn btn-primary" href="{{ url_for('ejemplares.create') }}">Agregar Ejemplar</a></li>
+        </ul>
+    </nav>
+</header>
+
+<main class="container">
+    <!-- Sección de Ejemplares con filtros -->
+    <div class="btn-group mb-3" role="group" aria-label="Secciones">
+        <button id="btn-ejemplares" type="button" class="btn btn-secondary" onclick="showSection('ejemplares')">Ejemplares</button>
+        <button id="btn-docs" type="button" class="btn btn-secondary" onclick="showSection('docs')">Documentos</button>
+    </div>
+
+    <!-- Sección de Ejemplares -->
+    <div id="section-ejemplares">
+        <section id="filtros" class="mb-4">
+            <h2>Filtrar y Ordenar Ejemplares</h2>
+            <form action="{{ url_for('ejemplares.index') }}" method="GET" class="row g-3">
+                <!-- Campos de filtros como en el código original -->
+                <div class="col-md-3">
+                    <label for="nombre" class="form-label">Nombre:</label>
+                    <input type="text" class="form-control" id="nombre" name="nombre" value="{{ request.args.get('nombre', '') }}" aria-label="Nombre">
+                </div>
+                <div class="col-md-3">
+                    <label for="tipo_de_jinete" class="form-label">Tipo de Jinete:</label>
+                    <select id="tipo_de_jinete" name="tipo_de_jinete" class="form-select" aria-label="Tipo de Jinete">
+                        <option value="">Seleccione una opción</option>
+                        {% for tipo_de_jinete in tipos_de_jinete %}
+                        <option value="{{ tipo_de_jinete.nombre }}" {% if request.args.get('tipo_de_jinete') == tipo_de_jinete.nombre %}selected{% endif %}>
+                            {{ tipo_de_jinete.nombre }}
+                        </option>
+                        {% endfor %}
+                    </select>
+                </div> 
+                <!-- Filtros adicionales aquí -->
+                <div class="col-auto" style="margin-top: 3rem;">
+                    <button type="submit" class="btn btn-primary">Buscar</button>
+                </div>
+            </form>
+        </section>
+
+        <section id="ejemplares" class="mb-4">
+            <h2>Ejemplares</h2>
+            <table class="table-responsive table-bordered">
+                <thead>
+                    <tr>
+                        <th>Nombre</th>
+                        <th>Fecha de ingreso</th>
+                        <th>Fecha de nacimiento</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for ejemplar in ejemplares %}
+                    <tr>
+                        <td>{{ ejemplar.nombre }}</td>
+                        <td>{{ ejemplar.fecha_ingreso.strftime('%d/%m/%Y') }}</td>
+                        <td>{{ ejemplar.fecha_nacimiento.strftime('%d/%m/%Y') }}</td>
+                        <td>
+                            <a href="{{ url_for('ejemplares.show', id=ejemplar.id) }}" class="btn btn-info" aria-label="Ver ejemplar {{ ejemplar.nombre }}">Ver</a> 
+                            <form action="{{ url_for('ejemplares.delete', id=ejemplar.id) }}" method="POST" style="display:inline;">
+                                <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('¿Estás seguro que deseas eliminar este ejemplar?');" aria-label="Eliminar ejemplar {{ ejemplar.nombre }}">Eliminar</button>
+                            </form>
+                        </td> 
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            <!-- Paginación -->
+            <nav aria-label="Page navigation">
+                <ul class="pagination justify-content-center">
+                    {% if current_page > 1 %}
+                        <li class="page-item">
+                            <a class="page-link" href="{{ url_for('ejemplares.index', page=current_page - 1, nombre=request.args.get('nombre'), tipo_de_jinete=request.args.get('tipo_de_jinete'), order_by=request.args.get('order_by'), order_direction=request.args.get('order_direction')) }}" aria-label="Anterior">
+                                Anterior
+                            </a>
+                        </li>
+                    {% else %}
+                        <li class="page-item disabled">
+                            <span class="page-link">Anterior</span>
+                        </li>
+                    {% endif %}
+            
+                    {% if start > 1 %}
+                        <li class="page-item">
+                            <a class="page-link" href="{{ url_for('ejemplares.index', page=1, nombre=request.args.get('nombre'), tipo_de_jinete=request.args.get('tipo_de_jinete'), order_by=request.args.get('order_by'), order_direction=request.args.get('order_direction')) }}">1</a>
+                        </li>
+                        {% if start > 2 %}
+                            <li class="page-item disabled">
+                                <span class="page-link">...</span>
+                            </li>
+                        {% endif %}
+                    {% endif %}
+            
+                    {% for page_num in range(start, end + 1) %}
+                        <li class="page-item {% if page_num == current_page %}active{% endif %}">
+                            <a class="page-link" href="{{ url_for('ejemplares.index', page=page_num, nombre=request.args.get('nombre'), tipo_de_jinete=request.args.get('tipo_de_jinete'), order_by=request.args.get('order_by'), order_direction=request.args.get('order_direction')) }}">{{ page_num }}</a>
+                        </li>
+                    {% endfor %}
+            
+                    {% if end < total_pages %}
+                        {% if end < total_pages - 1 %}
+                            <li class="page-item disabled">
+                                <span class="page-link">...</span>
+                            </li>
+                        {% endif %}
+                        <li class="page-item">
+                            <a class="page-link" href="{{ url_for('ejemplares.index', page=total_pages, nombre=request.args.get('nombre'), tipo_de_jinete=request.args.get('tipo_de_jinete'), order_by=request.args.get('order_by'), order_direction=request.args.get('order_direction')) }}">{{ total_pages }}</a>
+                        </li>
+                    {% endif %}
+            
+                    {% if current_page < total_pages %}
+                        <li class="page-item">
+                            <a class="page-link" href="{{ url_for('ejemplares.index', page=current_page + 1, nombre=request.args.get('nombre'), tipo_de_jinete=request.args.get('tipo_de_jinete'), order_by=request.args.get('order_by'), order_direction=request.args.get('order_direction')) }}" aria-label="Siguiente">
+                                Siguiente
+                            </a>
+                        </li>
+                    {% else %}
+                        <li class="page-item disabled">
+                            <span class="page-link">Siguiente</span>
+                        </li>
+                    {% endif %}
+                </ul>
+            </nav>
+        </section>
+    </div>
+
+    <!-- Sección de Documentos -->
+    <div id="section-docs" style="display:none;">
+        <section>
+            <h2>Filtrar y Ordenar Documentos</h2>
+            <form action="{{ url_for('ejemplares.index', section='docs') }}" method="GET" class="row g-3 mb-4">
+                <input type="hidden" name="section" value="docs"> 
+                <div class="col-md-3">
+                    <label for="titulo" class="form-label">Título:</label>
+                    <input type="text" class="form-control" id="titulo" name="titulo" value="{{ request.args.get('titulo', '') }}" aria-label="Título del documento">
+                </div>
+                <div class="col-md-3">
+                    <label for="tipo_documento" class="form-label">Tipo de Documento:</label>
+                    <select id="tipo_documento" name="tipo_documento" class="form-select" aria-label="Tipo de Documento">
+                        <option value="">Seleccione una opción</option>
+                        <option value="ficha_general">Ficha general del caballo</option>
+                        <option value="planificacion_entrenamiento">Planificación de Entrenamiento</option>
+                        <option value="informe_evolucion">Informe de Evolución</option>
+                        <option value="carga_imagenes">Carga de Imágenes</option>
+                        <option value="registro_veterinario">Registro veterinario</option>
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <label for="order_by2" class="form-label">Ordenar por:</label>
+                    <select id="order_by2" name="order_by2" class="form-select" aria-label="Ordenar por">
+                        <option value="filename" {% if request.args.get('order_by2') == 'filename' %}selected{% endif %}>Título</option>
+                        <option value="fecha_subida" {% if request.args.get('order_by2') == 'fecha_subida' %}selected{% endif %}>Fecha de Subida/Enlace</option>
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <label for="order_direction2" class="form-label">Dirección:</label>
+                    <select id="order_direction2" name="order_direction2" class="form-select" aria-label="Dirección de ordenamiento">
+                        <option value="asc" {% if request.args.get('order_direction2') == 'asc' %}selected{% endif %}>Ascendente</option>
+                        <option value="desc" {% if request.args.get('order_direction2') == 'desc' %}selected{% endif %}>Descendente</option>
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <button type="submit" class="btn btn-primary">Buscar</button>
+                </div>
+            </form>
+            {% if documentos %}
+            <table class="table-responsive table-bordered">
+                <thead>
+                    <tr>
+                        <th>Titular</th>
+                        <th>Nombre del Archivo</th>
+                        <th>Tipo de Documento</th>
+                        <th>Fecha de Subida</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for item in documentos %}
+                    <tr>
+                        <td>
+                            <a href="{{ url_for('ejemplares.show', id=item.ejemplar.id) }}" aria-label="Ver ejemplar {{ item.ejemplar.nombre }}">
+                                {{ item.ejemplar.nombre }}
+                            </a>
+                        </td>
+                        <td>{{ item.documento.filename }}</td>
+                        <td>{{ item.documento.document_type.value }}</td>
+                        <td>{{ item.documento.created_at.strftime('%d/%m/%Y') }}</td>
+
+                        <td>
+                            {% if item.documento.is_link %}
+                            <a href="{{ item.documento.filename }}" target="_blank" class="btn btn-sm btn-primary" aria-label="Abrir enlace {{ item.documento.filename }}">Abrir enlace</a>
+                            {% else %}
+                            <a href="{{ url_for('documentos.show', document_id=item.documento.id) }}" target="_blank" class="btn btn-sm btn-info" aria-label="Ver documento {{ item.documento.filename }}">Ver</a>
+                            <a href="{{ url_for('documentos.download', document_id=item.documento.id) }}" download class="btn btn-sm btn-success" aria-label="Descargar documento {{ item.documento.filename }}">Descargar</a>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            <nav aria-label="Page navigation">
+                <ul class="pagination justify-content-center">
+                    <!-- Botón "Anterior" -->
+                    {% if current_page2 > 1 %}
+                        <li class="page-item">
+                            <a class="page-link" href="?page2={{ current_page2 - 1 }}&section=docs" aria-label="Anterior">
+                                Anterior
+                            </a>
+                        </li>
+                    {% else %}
+                        <li class="page-item disabled">
+                            <span class="page-link">Anterior</span>
+                        </li>
+                    {% endif %}
+                    
+                    <!-- Paginación: si 'start' es mayor que 1, mostrar el botón para ir a la primera página -->
+                    {% if start2 > 1 %}
+                        <li class="page-item">
+                            <a class="page-link" href="?page2=1&section=docs">1</a>
+                        </li>
+                        {% if start2 > 2 %}
+                            <li class="page-item disabled">
+                                <span class="page-link">...</span>
+                            </li>
+                        {% endif %}
+                    {% endif %}
+                    
+                    <!-- Mostrar las páginas intermedias, desde 'start' hasta 'end' -->
+                    {% for page_num in range(start2, end2 + 1) %}
+                        {% if page_num <= total_pages2 %}
+                            <li class="page-item {% if page_num == current_page2 %}active{% endif %}">
+                                <a class="page-link" href="?page2={{ page_num }}&section=docs">{{ page_num }}</a>
+                            </li>
+                        {% endif %}
+                    {% endfor %}
+                    
+                    <!-- Paginación: si 'end' es menor que 'total_pages2', mostrar el botón para ir a la última página -->
+                    {% if end2 < total_pages2 %}
+                        {% if end2 < total_pages2 - 1 %}
+                            <li class="page-item disabled">
+                                <span class="page-link">...</span>
+                            </li>
+                        {% endif %}
+                        <li class="page-item">
+                            <a class="page-link" href="?page2={{ total_pages2 }}&section=docs">{{ total_pages2 }}</a>
+                        </li>
+                    {% endif %}
+                    
+                    <!-- Botón "Siguiente" -->
+                    {% if current_page2 < total_pages2 %}
+                        <li class="page-item">
+                            <a class="page-link" href="?page2={{ current_page2 + 1 }}&section=docs" aria-label="Siguiente">
+                                Siguiente
+                            </a>
+                        </li>
+                    {% else %}
+                        <li class="page-item disabled">
+                            <span class="page-link">Siguiente</span>
+                        </li>
+                    {% endif %}
+                </ul>
+            </nav>
+            
+            
+            
+            {% else %}
+            <p>No hay documentos disponibles.</p>
+            {% endif %}
+        </section>
+    </div>
+</main>
+
+<script>
+    const initialSection = "{{ section }}";
+
+    
+    function showSection(section) {
+        document.getElementById('section-ejemplares').style.display = (section === 'ejemplares') ? 'block' : 'none';
+        document.getElementById('section-docs').style.display = (section === 'docs') ? 'block' : 'none';
+
+        // Actualizar el estado de los botones
+        document.getElementById('btn-ejemplares').classList.toggle('btn-primary', section === 'ejemplares');
+        document.getElementById('btn-ejemplares').classList.toggle('btn-secondary', section !== 'ejemplares');
+        document.getElementById('btn-docs').classList.toggle('btn-primary', section === 'docs');
+        document.getElementById('btn-docs').classList.toggle('btn-secondary', section !== 'docs');
+    }
+
+    document.addEventListener('DOMContentLoaded', function() {
+        showSection(initialSection);
+    });
+
+
+</script>
+{% endblock %}

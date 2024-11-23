@@ -1,0 +1,17 @@
+{% extends "layout.html" %}
+
+{% block title %}Detalle de Consulta{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <h1 class="mb-4">Detalle de la Consulta</h1>
+    <p><strong>ID:</strong> {{ consulta.id }}</p>
+    <p><strong>Nombre:</strong> {{ consulta.nombrecompleto }}</p>
+    <p><strong>Correo:</strong> {{ consulta.correo }}</p>
+    <p><strong>Mensaje:</strong> {{ consulta.mensaje }}</p>
+    <p><strong>Estado:</strong> {{ consulta.estado }}</p>
+    <p><strong>Comentario:</strong> {% if consulta.comentario_interno %}{{ consulta.comentario_interno }}{% else %}No hay{% endif %}</p>
+    <p><strong>Fecha:</strong> {{ consulta.created_at.strftime('%d/%m/%Y') }}</p>
+    <a href="{{ url_for('contactos.index') }}" class="btn btn-secondary">Volver al listado</a>
+</div>
+{% endblock %}

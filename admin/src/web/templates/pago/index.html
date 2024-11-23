@@ -1,0 +1,130 @@
+{% extends "layout.html" %}
+
+{% block content %}
+<header class="title-container">
+    <h1 class="mt-4">Lista de Pagos</h1>
+    <nav class="mb-4">
+        <ul>
+            <li><a class="btn btn-primary" href="{{ url_for('pago.create') }}">Crear Nuevo Pago</a></li>
+        </ul>
+    </nav>
+</header>
+
+<main class="container">
+
+    <form method="GET" action="{{ url_for('pago.index') }}" class="row g-3 mb-4" aria-label="Formulario de búsqueda de pagos">
+        <div class="col-md-3">
+            <label for="beneficiario" class="form-label">Beneficiario (Nombre o Apellido)</label>
+            <input type="text" class="form-control" id="beneficiario" name="beneficiario" value="{{ filters.beneficiario }}" aria-describedby="BeneficiarioHelp" aria-label="Ingrese el nombre o apellido del beneficiario">
+            <div id="BeneficiarioHelp" class="form-text">Ingrese el nombre o apellido del beneficiario para filtrar los resultados.</div>
+        </div>
+
+        <div class="col-md-3">
+            <label for="tipo_de_pago" class="form-label">Tipo de Pago</label>
+            <select class="form-select" id="tipo_de_pago" name="tipo_de_pago" aria-label="Seleccione el tipo de pago">
+                <option value="">Todos</option>
+                <option value="Honorarios" {% if filters.tipo_de_pago == 'Honorarios' %}selected{% endif %}>Honorarios</option>
+                <option value="Proveedor" {% if filters.tipo_de_pago == 'Proveedor' %}selected{% endif %}>Proveedor</option>
+                <option value="Gastos varios" {% if filters.tipo_de_pago == 'Gastos varios' %}selected{% endif %}>Gastos varios</option>
+            </select>
+        </div>
+
+        <div class="col-md-3">
+            <label for="fecha_inicio" class="form-label">Desde</label>
+            <input type="date" class="form-control" id="fecha_inicio" name="fecha_inicio" value="{{ filters.fecha_inicio }}" max="{{ current_date }}" aria-label="Seleccione la fecha de inicio">
+        </div>
+
+        <div class="col-md-3">
+            <label for="fecha_fin" class="form-label">Hasta</label>
+            <input type="date" class="form-control" id="fecha_fin" name="fecha_fin" value="{{ filters.fecha_fin }}" max="{{ current_date }}" aria-label="Seleccione la fecha de fin">
+        </div>
+
+        <div class="col-md-3">
+            <label for="ordenar_fecha" class="form-label">Ordenar por Fecha</label>
+            <select class="form-select" id="ordenar_fecha" name="orden" aria-label="Ordenar por fecha">
+                <option value="asc" {% if order_direction == 'asc' %}selected{% endif %}>Ascendente</option>
+                <option value="desc" {% if order_direction == 'desc' %}selected{% endif %}>Descendente</option>
+            </select>
+        </div>
+
+        <div class="col-md-3">
+            <button type="submit" class="btn btn-primary mt-4" aria-label="Buscar pagos">Buscar</button>
+        </div>
+    </form>
+
+    <div class="table-responsive">
+        <table class="table-responsive table-bordered" aria-describedby="TablaPagos">
+            <thead class="table-light">
+                <tr>
+                    <th>ID</th>
+                    <th>Monto</th>
+                    <th>Descripción</th>
+                    <th>Fecha de Pago</th> 
+                    <th>Tipo de Pago</th>
+                    <th>Beneficiario</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% if pagos %}
+                    {% for pago in pagos %}
+                        <tr>
+                            <td>{{ pago.id }}</td>
+                            <td>{{ pago.monto }}</td>
+                            <td>{{ pago.descripcion }}</td>
+                            <td>{{ pago.fecha.strftime('%d/%m/%Y') }}</td> 
+                            <td>{{ pago.tipo_de_pago }}</td>
+                            <td>
+                                {% if pago.tipo_de_pago == 'Honorarios' and pago.beneficiario %}
+                                    {{ pago.beneficiario.nombre }} {{ pago.beneficiario.apellido }}
+                                {% else %}
+                                    No hay
+                                {% endif %}
+                            </td>
+                            <td>
+                                <a href="{{ url_for('pago.show', id=pago.id) }}" class="btn btn-info" aria-label="Ver detalles del pago">Ver Detalles</a>
+                                <a href="{{ url_for('pago.update', id=pago.id) }}" class="btn btn-warning" aria-label="Editar pago">Editar</a>
+                                <form action="{{ url_for('pago.delete', id=pago.id) }}" method="POST" style="display:inline-block;">
+                                    <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('¿Estás seguro que deseas eliminar este pago?');" aria-label="Eliminar pago">Eliminar</button>
+                                </form>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                {% else %}
+                    <tr>
+                        <td colspan="7" class="text-center">No se encontraron resultados</td>
+                    </tr>
+                {% endif %}
+            </tbody>
+        </table>
+
+        <nav aria-label="Paginación">
+            <ul class="pagination">
+                {% if pagination.has_prev %}
+                    <li class="page-item"><a class="page-link" href="?page={{ pagination.prev_num }}">Anterior</a></li>
+                {% else %}
+                    <li class="page-item disabled"><span class="page-link">Anterior</span></li>
+                {% endif %}
+                {% for p in range(start, end + 1) %}
+                    <li class="page-item {% if p == page %}active{% endif %}">
+                        <a class="page-link" href="?page={{ p }}">{{ p }}</a>
+                    </li>
+                {% endfor %}
+                {% if pagination.has_next %}
+                    <li class="page-item"><a class="page-link" href="?page={{ pagination.next_num }}">Siguiente</a></li>
+                {% else %}
+                    <li class="page-item disabled"><span class="page-link">Siguiente</span></li>
+                {% endif %}
+            </ul>
+        </nav>
+    </div>
+</main>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        var today = new Date().toISOString().split('T')[0];
+        document.getElementById("fecha_inicio").setAttribute('max', today);
+        document.getElementById("fecha_fin").setAttribute('max', today);
+    });
+</script>
+{% endblock %}

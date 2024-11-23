@@ -1,0 +1,112 @@
+{% extends "layout.html"%}
+{% block title %}Agregar Documento{% endblock %}
+{% block content %}
+<h2 id="doc-title">Documentación Complementaria</h2>
+<form action="{{ url_for('documentos.create_doc_ejemplar', ejemplar_id=ejemplar_id) }}" method="POST" class="form-container" enctype="multipart/form-data" aria-labelledby="doc-title">
+        <div id="documentos-container">
+            <!-- Documento inicial -->
+            <div class="form-group documento-item">
+                <label for="tipo_documento_0">Tipo de Documento</label>
+                <select id="tipo_documento_0" name="tipo_documento[]" class="form-control tipo-documento" required aria-describedby="tipo-doc-help-0">
+                    <option value="">Seleccione una opción</option>
+                    {% for tipo in tipos_docs %}
+                        <option value="{{ tipo.name }}">{{ tipo.value }}</option>
+                    {% endfor %}
+                </select>
+                <small id="tipo-doc-help-0" class="text-muted">Seleccione el tipo de documento</small>
+
+                <label for="documento_tipo_0">Tipo de Entrada</label>
+                <select id="documento_tipo_0" name="documento_tipo[]" class="form-control documento-tipo" onchange="toggleFileOrLink(0)" required aria-describedby="tipo-entrada-help-0">
+                    <option value="archivo">Archivo</option>
+                    <option value="link">Enlace</option>
+                </select>
+                <small id="tipo-entrada-help-0" class="text-muted">Seleccione archivo o enlace</small>
+
+                <div class="file-input-container" id="file-input-container-0">
+                    <label for="documento_0">Adjuntar Archivo</label>
+                    <input type="file" id="documento_0" name="documentos[]" class="form-control" aria-describedby="file-help-0">
+                    <small id="file-help-0" class="text-muted">Sube un archivo si seleccionaste la opción "Archivo"</small>
+                </div>
+
+                <div class="link-input-container d-none" id="link-input-container-0">
+                    <label for="link_0">Ingresar Enlace</label>
+                    <input type="url" id="link_0" name="links[]" class="form-control" placeholder="Ingrese el enlace" aria-describedby="link-help-0">
+                    <small id="link-help-0" class="text-muted">Ingresa el enlace si seleccionaste la opción "Enlace"</small>
+                </div>
+            </div>
+        </div>
+
+        <button type="button" class="btn btn-secondary mt-2" onclick="agregarDocumento()" aria-label="Agregar otro documento">Agregar Otro Documento</button>
+
+        <div class="form-group mt-4">
+            <button type="submit" class="btn btn-primary" aria-label="Guardar documentos">Guardar</button>
+        </div>
+    </form>
+
+<script>
+    // Manejo de Documentos
+    let documentoIndex = 1;
+
+    function toggleFileOrLink(index) {
+        const tipoSelect = document.getElementById(`documento_tipo_${index}`);
+        const fileContainer = document.getElementById(`file-input-container-${index}`);
+        const linkContainer = document.getElementById(`link-input-container-${index}`);
+
+        if (tipoSelect.value === 'archivo') {
+            fileContainer.classList.remove('d-none');
+            linkContainer.classList.add('d-none');
+        } else if (tipoSelect.value === 'link') {
+            fileContainer.classList.add('d-none');
+            linkContainer.classList.remove('d-none');
+        }
+    }
+
+    function agregarDocumento() {
+        const documentosContainer = document.getElementById('documentos-container');
+        const documentoItem = document.createElement('div');
+        documentoItem.classList.add('form-group', 'documento-item', 'mt-3');
+
+        documentoItem.innerHTML = `
+            <label for="tipo_documento_${documentoIndex}">Tipo de Documento</label>
+            <select id="tipo_documento_${documentoIndex}" name="tipo_documento[]" class="form-control tipo-documento" required aria-describedby="tipo-doc-help-${documentoIndex}">
+                <option value="">Seleccione una opción</option>
+                <option value="ficha_general">Ficha general del caballo</option>
+                <option value="planificacion_entrenamiento">Planificación de Entrenamiento</option>
+                <option value="informe_evolucion">Informe de Evolución</option>
+                <option value="carga_imagenes">Carga de Imágenes</option>
+                <option value="registro_veterinario">Registro veterinario</option>
+            </select>
+            <small id="tipo-doc-help-${documentoIndex}" class="text-muted">Seleccione el tipo de documento</small>
+
+            <label for="documento_tipo_${documentoIndex}">Tipo de Entrada</label>
+            <select id="documento_tipo_${documentoIndex}" name="documento_tipo[]" class="form-control documento-tipo" onchange="toggleFileOrLink(${documentoIndex})" required aria-describedby="tipo-entrada-help-${documentoIndex}">
+                <option value="archivo">Archivo</option>
+                <option value="link">Enlace</option>
+            </select>
+            <small id="tipo-entrada-help-${documentoIndex}" class="text-muted">Seleccione archivo o enlace</small>
+
+            <div class="file-input-container" id="file-input-container-${documentoIndex}">
+                <label for="documento_${documentoIndex}">Adjuntar Archivo</label>
+                <input type="file" id="documento_${documentoIndex}" name="documentos[]" class="form-control" aria-describedby="file-help-${documentoIndex}">
+                <small id="file-help-${documentoIndex}" class="text-muted">Sube un archivo si seleccionaste "Archivo"</small>
+            </div>
+            <div class="link-input-container d-none" id="link-input-container-${documentoIndex}">
+                <label for="link_${documentoIndex}">Ingresar Enlace</label>
+                <input type="url" id="link_${documentoIndex}" name="links[]" class="form-control" placeholder="Ingrese el enlace" aria-describedby="link-help-${documentoIndex}">
+                <small id="link-help-${documentoIndex}" class="text-muted">Ingresa el enlace si seleccionaste "Enlace"</small>
+            </div>
+
+            <button type="button" class="btn btn-danger mt-2" onclick="eliminarDocumento(this)" aria-label="Eliminar documento">Eliminar Documento</button>
+        `;
+
+        documentosContainer.appendChild(documentoItem);
+        documentoIndex++;
+    }
+
+    function eliminarDocumento(button) {
+        const documentoItem = button.parentElement;
+        documentoItem.remove();
+    }
+</script>
+
+{% endblock %}

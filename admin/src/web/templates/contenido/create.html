@@ -1,0 +1,106 @@
+{% extends "layout.html" %} {% block title %}Crear Borrador{% endblock %} {%
+block content %}
+<h1 style="text-align: center">Crear Nuevo Borrador</h1>
+<form
+  action="{{ url_for('contenido.create') }}"
+  method="POST"
+  class="form-container"
+  onsubmit="return submitForm()"
+>
+  <div class="form-group">
+    <label for="titulo">Titulo:</label>
+    <input
+      type="text"
+      id="titulo"
+      name="titulo"
+      class="form-control"
+      maxlength="90"
+      required
+      aria-label="Titulo del contenido"
+    />
+    <small id="tituloCounter">0/90</small>
+  </div>
+
+  <!-- Quill Editor para el Copete -->
+  <div class="form-group">
+    <label for="copete">Copete:</label>
+    <div id="copete-editor" style="height: 100px"></div>
+    <small id="copeteCounter">0/250</small>
+    <input type="hidden" name="copete" id="copete" maxlength="250" />
+  </div>
+
+  <!-- Quill Editor para el Cuerpo -->
+  <div class="form-group">
+    <label for="cuerpo">Cuerpo:</label>
+    <div id="cuerpo-editor" style="height: 300px"></div>
+    <input type="hidden" name="cuerpo" id="cuerpo" />
+  </div>
+
+  <div class="form-group">
+    <button type="submit" class="btn btn-primary">Crear Borrador</button>
+  </div>
+</form>
+
+<!-- Inicialización de Quill -->
+<script>
+  // Inicializar Quill en copete y cuerpo
+  var copeteEditor = new Quill("#copete-editor", {
+    theme: "snow",
+    placeholder: "Escribe el copete aquí...",
+    modules: {
+      toolbar: [
+        ["bold", "italic", "underline"],
+        [{ list: "ordered" }, { list: "bullet" }],
+        ["link"],
+      ],
+    },
+  });
+
+  var cuerpoEditor = new Quill("#cuerpo-editor", {
+    theme: "snow",
+    placeholder: "Escribe el cuerpo aquí...",
+    modules: {
+      toolbar: [
+        ["bold", "italic", "underline"],
+        [{ header: [1, 2, false] }],
+        [{ list: "ordered" }, { list: "bullet" }],
+        ["link"],
+      ],
+    },
+  });
+
+  // Contador de caracteres para Título
+  const tituloInput = document.getElementById("titulo");
+  const tituloCounter = document.getElementById("tituloCounter");
+
+  tituloInput.addEventListener("input", () => {
+    tituloCounter.textContent = `${tituloInput.value.length}/90`;
+  });
+
+  // Contador de caracteres para Copete
+  copeteEditor.on("text-change", function () {
+    const copeteText = copeteEditor.getText().trim();
+    document.getElementById(
+      "copeteCounter"
+    ).textContent = `${copeteText.length}/250`;
+  });
+
+  // Al enviar el formulario, pasar el contenido de Quill a los campos ocultos
+  function submitForm() {
+    document.getElementById("copete").value = copeteEditor.root.innerHTML;
+    document.getElementById("cuerpo").value = cuerpoEditor.root.innerHTML;
+
+    // Validación de longitud de copete (máximo 150 caracteres)
+    if (copeteEditor.getText().trim().length > 250) {
+      alert("El copete no puede exceder 250 caracteres");
+      return false;
+    }
+    if (tituloEditor.getText().trim().length > 90) {
+      alert("El copete no puede exceder 250 caracteres");
+      return false;
+    }
+
+    return true;
+  }
+</script>
+{% endblock %}

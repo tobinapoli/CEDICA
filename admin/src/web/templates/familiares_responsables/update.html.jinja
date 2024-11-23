@@ -1,0 +1,119 @@
+{% extends "layout.html" %}
+
+{% block content %}
+<div class="container">
+    <h2>Actualizar Familiar Responsable</h2>
+
+    <form method="POST" action="{{ url_for('familiares_responsables.update', id=familiar_responsable.id) }}">
+        {{ form.hidden_tag() }}
+        
+        <div class="form-group">
+            {{ form.parentesco.label(class="form-label") }}
+            {{ form.parentesco(class="form-control") }}
+            {% for error in form.parentesco.errors %}
+                <span class="text-danger">{{ error }}</span>
+            {% endfor %}
+        </div>
+        
+        <div class="form-group">
+            {{ form.nombre.label(class="form-label") }}
+            {{ form.nombre(class="form-control") }}
+            {% for error in form.nombre.errors %}
+                <span class="text-danger">{{ error }}</span>
+            {% endfor %}
+        </div>
+        
+        <div class="form-group">
+            {{ form.apellido.label(class="form-label") }}
+            {{ form.apellido(class="form-control") }}
+            {% for error in form.apellido.errors %}
+                <span class="text-danger">{{ error }}</span>
+            {% endfor %}
+        </div>
+        
+        <div class="form-group">
+            {{ form.dni.label(class="form-label") }}
+            {{ form.dni(class="form-control") }}
+            {% for error in form.dni.errors %}
+                <span class="text-danger">{{ error }}</span>
+            {% endfor %}
+        </div>
+        
+        <div class="form-group">
+            {{ form.celular.label(class="form-label") }}
+            {{ form.celular(class="form-control") }}
+            {% for error in form.celular.errors %}
+                <span class="text-danger">{{ error }}</span>
+            {% endfor %}
+        </div>
+        
+        <div class="form-group">
+            {{ form.email.label(class="form-label") }}
+            {{ form.email(class="form-control") }}
+            {% for error in form.email.errors %}
+                <span class="text-danger">{{ error }}</span>
+            {% endfor %}
+        </div>
+        
+        <div class="form-group">
+            {{ form.nivel_escolaridad.label(class="form-label") }}
+            {{ form.nivel_escolaridad(class="form-control") }}
+            {% for error in form.nivel_escolaridad.errors %}
+                <span class="text-danger">{{ error }}</span>
+            {% endfor %}
+        </div>
+        
+        <div class="form-group">
+            {{ form.actividad_ocupacion.label(class="form-label") }}
+            {{ form.actividad_ocupacion(class="form-control") }}
+            {% for error in form.actividad_ocupacion.errors %}
+                <span class="text-danger">{{ error }}</span>
+            {% endfor %}
+        </div>
+        
+        <h2> Domicilio </h2>
+        <div class="form-group">
+        <label for="calle">Calle:</label>
+        <input type="text" id="calle" name="calle" class="form-control" value = "{{direccion_domicilio.calle}}" required>
+        {% if form.calle.errors %}
+            <span id="calle-error" class="text-danger">{{ form.calle.errors[0] }}</span>
+        {% endif %}
+        </div>
+
+        <div class="form-group">
+            <label for="numero">Número:</label>
+            <input type="text" id="numero" name="numero" class="form-control" value = "{{direccion_domicilio.numero}}" required>
+            {% if form.numero.errors %}
+                <span id="numero-error" class="text-danger">{{ form.numero.errors[0] }}</span>
+            {% endif %}
+        </div>
+
+        <div class="form-group">
+            <label for="depto">Departamento:</label>
+            <input type="text" id="depto" name="depto" class="form-control" value = "{{direccion_domicilio.depto}}">
+            {% if form.depto.errors %}
+                <span id="depto-error" class="text-danger">{{ form.depto.errors[0] }}</span>
+            {% endif %}
+        </div>
+
+        <div class="form-group">
+            <label for="localidad">Localidad:</label>
+            <input type="text" id="localidad" name="localidad" class="form-control" value = "{{direccion_domicilio.localidad}}" required>
+            {% if form.localidad.errors %}
+                <span id="localidad-error" class="text-danger">{{ form.localidad.errors[0] }}</span>
+            {% endif %}
+        </div>
+        
+        <div class="form-group">
+        {{ form.provincia.label(class="form-label") }}
+        {{ form.provincia(class="form-control") }}
+        <span id="provincia-error" class="text-danger">{{ form.provincia.errors[0] if form.provincia.errors else '' }}</span>
+        </div>
+        <button type="submit" class="btn btn-primary">Actualizar Familiar Responsable</button>
+    </div>
+
+        
+        
+    </form>
+</div>
+{% endblock %}

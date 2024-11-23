@@ -1,0 +1,32 @@
+{% extends "layout.html" %}
+
+{% block title %}Gráficos Estadísticos{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <h1 class="text-center mb-4">Gráficos Estadísticos</h1>
+    
+    <div id="grafico1" class="my-4">
+        <h2>Ranking de Provincias con mas Jinetes y Amazonas</h2>
+        <div>
+            {{ graph_html | safe }}  
+            <a href="{{ url_for('graficos.download_propuesta_pdf') }}" download>Descargar PDF</a>
+        </div>
+    </div>
+
+    <div id="grafico2" class="my-4">
+        <h2>Gráfico 2: Distribución de Discapacidades</h2>
+        <div>
+            {{ graph_html2 | safe }}  
+            <a href="{{ url_for('graficos.download_discapacidad_pdf') }}" download>Descargar PDF</a>
+        </div>
+    </div>
+
+    <div id="grafico3" class="my-4">
+        <h2>Gráfico 3: Cantidad de Jinetes y Amazonas becados</h2>
+        <div>
+            {{ graph_html3 | safe }} 
+            <a href="{{ url_for('graficos.download_becados_pdf') }}" download>Descargar PDF</a> 
+    </div>
+</div>
+{% endblock %}

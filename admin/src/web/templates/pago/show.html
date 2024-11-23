@@ -1,0 +1,55 @@
+{% extends "layout.html" %}
+
+{% block title %}Detalles del Pago{% endblock %}
+
+{% block content %}
+    <div class="container">
+        <h1 class="text-center mb-4">Detalles del Pago</h1>
+
+        <div class="row">
+            <div class="col-md-8">
+                <h2>Información del Pago</h2>
+                <table class="table-responsive table-bordered" aria-label="Tabla de detalles del pago">
+                    <tr>
+                        <th>ID:</th>
+                        <td>{{ pago.id }}</td>
+                    </tr>
+                    <tr>
+                        <th>Beneficiario:</th>
+                        <td>
+                            {% if pago.tipo_de_pago == 'Honorarios' and pago.beneficiario %}
+                                {{ pago.beneficiario.nombre }} {{ pago.beneficiario.apellido }}
+                            {% else %}
+                                No hay
+                            {% endif %}
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>Monto:</th>
+                        <td>{{ pago.monto }}</td>
+                    </tr>
+                    <tr>
+                        <th>Fecha de Pago:</th>
+                        <td>{{ pago.fecha.strftime('%d/%m/%Y') }}</td>
+                    </tr>
+                    <tr>
+                        <th>Tipo de Pago:</th>
+                        <td>{{ pago.tipo_de_pago }}</td>
+                    </tr>
+                    <tr>
+                        <th>Descripción:</th>
+                        <td>{{ pago.descripcion or 'N/A' }}</td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+
+        <div class="actions mt-4" aria-label="Acciones">
+            <a href="{{ url_for('pago.update', id=pago.id) }}" class="btn btn-primary" aria-label="Editar pago">Editar</a>
+            <form action="{{ url_for('pago.delete', id=pago.id) }}" method="POST" style="display:inline;">
+                <button type="submit" class="btn btn-danger btn-sm" aria-label="Eliminar pago" onclick="return confirm('¿Estás seguro que deseas eliminar este pago?');">Eliminar</button>
+            </form>
+            <a href="{{ url_for('pago.index') }}" class="btn btn-secondary" aria-label="Volver a la lista de pagos">Volver</a>
+        </div>
+    </div>
+{% endblock %}

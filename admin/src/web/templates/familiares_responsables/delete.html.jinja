@@ -1,0 +1,12 @@
+{% extends "layout.html" %}
+
+{% block content %}
+<h2>Eliminar Familiar Responsable</h2>
+
+<p>¿Estás seguro de que deseas eliminar a {{ familiar_responsable.nombre }} {{ familiar_responsable.apellido }} con DNI {{ familiar_responsable.dni }}?</p>
+
+<form action="{{ url_for('familiares_responsables.delete', id=familiar_responsable.id) }}" method="post">
+    <button type="submit" class="btn btn-danger">Eliminar</button>
+    <a href="{{ url_for('familiares_responsables.index') }}" class="btn btn-secondary">Cancelar</a>
+</form>
+{% endblock %}

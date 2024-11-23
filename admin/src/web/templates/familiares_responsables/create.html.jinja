@@ -1,0 +1,118 @@
+{% extends "layout.html" %}
+
+{% block content %}
+<div class="container">
+    <h2>Agregar Nuevo Familiar Responsable</h2>
+
+    <form method="POST" action="{{ url_for('familiares_responsables.create', jinete_id=jinete_id) }}">
+        {{ form.hidden_tag() }}
+        
+        <div class="form-group">
+            {{ form.parentesco.label(class="form-label") }}
+            {{ form.parentesco(class="form-control") }}
+            {% for error in form.parentesco.errors %}
+                <span class="text-danger">{{ error }}</span>
+            {% endfor %}
+        </div>
+        
+        <div class="form-group">
+            {{ form.nombre.label(class="form-label") }}
+            {{ form.nombre(class="form-control") }}
+            {% for error in form.nombre.errors %}
+                <span class="text-danger">{{ error }}</span>
+            {% endfor %}
+        </div>
+        
+        <div class="form-group">
+            {{ form.apellido.label(class="form-label") }}
+            {{ form.apellido(class="form-control") }}
+            {% for error in form.apellido.errors %}
+                <span class="text-danger">{{ error }}</span>
+            {% endfor %}
+        </div>
+        
+        <div class="form-group">
+            {{ form.dni.label(class="form-label") }}
+            {{ form.dni(class="form-control") }}
+            {% for error in form.dni.errors %}
+                <span class="text-danger">{{ error }}</span>
+            {% endfor %}
+        </div>
+        
+        <div class="form-group">
+            {{ form.celular.label(class="form-label") }}
+            {{ form.celular(class="form-control") }}
+            {% for error in form.celular.errors %}
+                <span class="text-danger">{{ error }}</span>
+            {% endfor %}
+        </div>
+        
+        <div class="form-group">
+            {{ form.email.label(class="form-label") }}
+            {{ form.email(class="form-control") }}
+            {% for error in form.email.errors %}
+                <span class="text-danger">{{ error }}</span>
+            {% endfor %}
+        </div>
+        
+        <div class="form-group">
+            {{ form.nivel_escolaridad.label(class="form-label") }}
+            {{ form.nivel_escolaridad(class="form-control") }}
+            {% for error in form.nivel_escolaridad.errors %}
+                <span class="text-danger">{{ error }}</span>
+            {% endfor %}
+        </div>
+        
+        <div class="form-group">
+            {{ form.actividad_ocupacion.label(class="form-label") }}
+            {{ form.actividad_ocupacion(class="form-control") }}
+            {% for error in form.actividad_ocupacion.errors %}
+                <span class="text-danger">{{ error }}</span>
+            {% endfor %}
+        </div>
+        
+        <h2>Domicilio</h2>
+        <div class="form-group">
+            {{ form.calle.label(class="form-label") }}
+            {{ form.calle(class="form-control") }}
+            {% for error in form.calle.errors %}
+                <span class="text-danger">{{ error }}</span>
+            {% endfor %}
+        </div>
+        
+        <div class="form-group">
+            {{ form.numero.label(class="form-label") }}
+            {{ form.numero(class="form-control") }}
+            {% for error in form.numero.errors %}
+                <span class="text-danger">{{ error }}</span>
+            {% endfor %}
+        </div>
+        
+        <div class="form-group">
+            {{ form.depto.label(class="form-label") }}
+            {{ form.depto(class="form-control") }}
+            {% for error in form.depto.errors %}
+                <span class="text-danger">{{ error }}</span>
+            {% endfor %}
+        </div>
+        
+        <div class="form-group">
+            {{ form.localidad.label(class="form-label") }}
+            {{ form.localidad(class="form-control") }}
+            {% for error in form.localidad.errors %}
+                <span class="text-danger">{{ error }}</span>
+            {% endfor %}
+        </div>
+        
+        <div class="form-group">
+            {{ form.provincia.label(class="form-label") }}
+            {{ form.provincia(class="form-control") }}
+            {% for error in form.provincia.errors %}
+                <span class="text-danger">{{ error }}</span>
+            {% endfor %}
+        </div>
+        
+        <button type="submit" class="btn btn-primary">Crear Familiar Responsable</button>
+    </form>
+</div>
+{% endblock %}

@@ -1,0 +1,245 @@
+{% extends "layout.html" %}
+
+{% block title %}Agregar Ejemplar{% endblock %}
+
+{% block content %}
+
+    <h1 style="text-align: center;">Agregar Ejemplar</h1>
+    <form action="{{ url_for('ejemplares.create') }}" method="POST" class="form-container" enctype="multipart/form-data">
+
+        <h2>Datos del Ejemplar</h2>
+        <div class="form-group">
+            <label for="nombre">Nombre</label>
+            <input type="text" id="nombre" name="nombre" class="form-control" required aria-label="Nombre">
+        </div>
+
+        <div class="form-group">
+            <label for="fecha_nacimiento">Fecha de nacimiento</label>
+            <input type="date" id="fecha_nacimiento" name="fecha_nacimiento" class="form-control" required aria-label="Fecha de nacimiento">
+        </div>
+
+        <div class="form-group">
+            <label for="genero" class="form-label">Género</label>
+            <input type="text" id="genero" name="genero" class="form-control" required aria-label="Género">
+        </div>
+
+        <div class="form-group">
+            <label for="raza" class="form-label">Raza</label>
+            <input type="text" id="raza" name="raza" class="form-control" required aria-label="Raza">
+        </div>
+
+        <div class="form-group">
+            <label for="pela" class="form-label">Pelaje</label>
+            <input type="text" id="pela" name="pela" class="form-control" required aria-label="Pelaje">
+        </div>
+
+        <div class="form-group">
+            <label for="tipo_de_adquisicion" class="form-label">Tipo de Adquisición</label>
+            <select id="tipo_de_adquisicion" name="tipo_de_adquisicion" class="form-control" required aria-label="Tipo de Adquisición">
+                <option value="">Seleccione una opción</option>
+                <option value="compra">Compra</option>
+                <option value="donacion">Donación</option>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label for="sede" class="form-label">Sede</label>
+            <input type="text" id="sede" name="sede" class="form-control" required aria-label="Sede">
+        </div>
+
+        <div class="form-group">
+            <label for="buscar-entrenador" class="form-label">Selecciona uno o más Entrenadores</label>
+            <input type="text" id="buscar-entrenador" class="form-control" placeholder="Buscar entrenador..." aria-label="Buscar entrenador">
+            <div id="resultados-busqueda" class="list-group mt-2"></div>
+        </div>
+
+        <div class="form-group">
+            <h4>Entrenadores seleccionados:</h4>
+            <ul id="entrenadores-seleccionados" class="entrenadores-list"></ul>
+        </div>
+
+        <input type="hidden" name="entrenadores" id="selected_entrenadores_input">
+
+        <div class="form-group">
+            <label for="tipo_jinete" class="form-label">Tipo de Jinete</label>
+            <select id="tipo_jinete" name="tipo_jinete" class="form-control" aria-label="Tipo de Jinete">
+                <option value="">Seleccione una opción</option>
+                {% for tipo_de_jinete in tipos_de_jinete %}
+                <option value="{{ tipo_de_jinete.id }}" {% if request.form.get('tipo_jinete') == tipo_de_jinete.id|string %}selected{% endif %}>{{ tipo_de_jinete.nombre }}</option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label for="fecha_ingreso" class="form-label">Fecha de ingreso</label>
+            <input type="date" id="fecha_ingreso" name="fecha_ingreso" class="form-control" required aria-label="Fecha de ingreso">
+        </div>
+
+        <h2>Documentación Complementaria</h2>
+        <div id="documentos-container">
+            <!-- Documento inicial -->
+            <div class="form-group documento-item">
+                <label for="tipo_documento_0">Tipo de Documento</label>
+                <select id="tipo_documento_0" name="tipo_documento[]" class="form-control tipo-documento" aria-label="Tipo de Documento">
+                    <option value="">Seleccione una opción</option>
+                    {% for tipo in tipos_docs %}
+                        <option value="{{ tipo.name }}">{{ tipo.value }}</option>
+                    {% endfor %}
+                </select>
+
+                <label for="documento_tipo_0">Tipo de Entrada</label>
+                <select id="documento_tipo_0" name="documento_tipo[]" class="form-control documento-tipo" onchange="toggleFileOrLink(0)" aria-label="Tipo de Entrada">
+                    <option value="archivo">Archivo</option>
+                    <option value="link">Enlace</option>
+                </select>
+
+                <div class="file-input-container" id="file-input-container-0">
+                    <label for="documento_0">Adjuntar Archivo</label>
+                    <input type="file" id="documento_0" name="documentos[]" class="form-control" aria-label="Adjuntar Archivo">
+                </div>
+                <div class="link-input-container d-none" id="link-input-container-0">
+                    <label for="link_0">Ingresar Enlace</label>
+                    <input type="url" id="link_0" name="links[]" class="form-control" placeholder="Ingrese el enlace" aria-label="Ingresar Enlace">
+                </div>
+            </div>
+        </div>
+
+        <button type="button" class="btn btn-secondary mt-2" onclick="agregarDocumento()">Agregar Otro Documento</button>
+
+        <div class="form-group mt-4">
+            <button type="submit" class="btn btn-primary">Guardar</button>
+        </div>
+    </form>
+
+<script>
+    // Manejo de Entrenadores
+    const entrenadores = {{ empleados | tojson }};
+    const buscarInput = document.getElementById('buscar-entrenador');
+    const resultadosBusqueda = document.getElementById('resultados-busqueda');
+    const entrenadoresSeleccionadosUl = document.getElementById('entrenadores-seleccionados');
+    const selectedEntrenadoresInput = document.getElementById('selected_entrenadores_input');
+    let entrenadoresSeleccionados = [];
+
+    buscarInput.addEventListener('input', function() {
+        const query = buscarInput.value.toLowerCase();
+        resultadosBusqueda.innerHTML = '';
+
+        if (query.length > 0) {
+            entrenadores
+                .filter(entrenador => 
+                    entrenador.nombre.toLowerCase().includes(query) || 
+                    entrenador.apellido.toLowerCase().includes(query) || 
+                    entrenador.dni.includes(query)
+                )
+                .forEach(entrenador => {
+                    const item = document.createElement('a');
+                    item.classList.add('list-group-item', 'list-group-item-action');
+                    item.textContent = `${entrenador.nombre} ${entrenador.apellido} (${entrenador.dni})`;
+                    item.dataset.id = entrenador.id;
+
+                    item.addEventListener('click', function() {
+                        agregarEntrenador(entrenador);
+                        buscarInput.value = '';  // Limpiar el campo de búsqueda
+                        resultadosBusqueda.innerHTML = '';  // Limpiar los resultados
+                    });
+
+                    resultadosBusqueda.appendChild(item);
+                });
+        }
+    });
+
+    function agregarEntrenador(entrenador) {
+        // Verificar si ya ha sido seleccionado
+        if (entrenadoresSeleccionados.some(e => e.id === entrenador.id)) return;
+
+        entrenadoresSeleccionados.push(entrenador);
+
+        // Crear un elemento <li> para mostrar el entrenador seleccionado
+        const li = document.createElement('li');
+        li.classList.add('list-group-item', 'd-flex', 'justify-content-between', 'align-items-center');
+        li.textContent = `${entrenador.nombre} ${entrenador.apellido} (${entrenador.dni})`;
+
+        // Crear botón para deseleccionar
+        const removeButton = document.createElement('button');
+        removeButton.textContent = '❌';
+        removeButton.classList.add('btn', 'btn-danger', 'btn-sm');
+        removeButton.addEventListener('click', function() {
+            li.remove();
+            entrenadoresSeleccionados = entrenadoresSeleccionados.filter(e => e.id !== entrenador.id);
+            actualizarCampoOculto();
+        });
+
+        li.appendChild(removeButton);
+        entrenadoresSeleccionadosUl.appendChild(li);
+
+        actualizarCampoOculto();
+    }
+
+    function actualizarCampoOculto() {
+        const idsSeleccionados = entrenadoresSeleccionados.map(e => e.id);
+        selectedEntrenadoresInput.value = idsSeleccionados.join(',');
+    }
+
+    // Manejo de Documentos
+    let documentoIndex = 1; // Índice para documentos adicionales
+
+    function toggleFileOrLink(index) {
+        const tipoSelect = document.getElementById(`documento_tipo_${index}`);
+        const fileContainer = document.getElementById(`file-input-container-${index}`);
+        const linkContainer = document.getElementById(`link-input-container-${index}`);
+
+        if (tipoSelect.value === 'archivo') {
+            fileContainer.classList.remove('d-none');
+            linkContainer.classList.add('d-none');
+        } else if (tipoSelect.value === 'link') {
+            fileContainer.classList.add('d-none');
+            linkContainer.classList.remove('d-none');
+        }
+    }
+
+    function agregarDocumento() {
+        const documentosContainer = document.getElementById('documentos-container');
+
+        const documentoItem = document.createElement('div');
+        documentoItem.classList.add('form-group', 'documento-item', 'mt-3');
+
+        documentoItem.innerHTML = `
+            <label for="tipo_documento_${documentoIndex}">Tipo de Documento</label>
+            <select id="tipo_documento_${documentoIndex}" name="tipo_documento[]" class="form-control tipo-documento" required>
+                <option value="">Seleccione una opción</option>
+                    {% for tipo in tipos_docs %}
+                        <option value="{{ tipo.name }}">{{ tipo.value }}</option>
+                    {% endfor %}
+            </select>
+
+            <label for="documento_tipo_${documentoIndex}">Tipo de Entrada</label>
+            <select id="documento_tipo_${documentoIndex}" name="documento_tipo[]" class="form-control documento-tipo" onchange="toggleFileOrLink(${documentoIndex})" required>
+                <option value="archivo">Archivo</option>
+                <option value="link">Enlace</option>
+            </select>
+
+            <div class="file-input-container" id="file-input-container-${documentoIndex}">
+                <label for="documento_${documentoIndex}">Adjuntar Archivo</label>
+                <input type="file" id="documento_${documentoIndex}" name="documentos[]" class="form-control">
+            </div>
+            <div class="link-input-container d-none" id="link-input-container-${documentoIndex}">
+                <label for="link_${documentoIndex}">Ingresar Enlace</label>
+                <input type="url" id="link_${documentoIndex}" name="links[]" class="form-control" placeholder="Ingrese el enlace">
+            </div>
+
+            <button type="button" class="btn btn-danger mt-2" onclick="eliminarDocumento(this)">Eliminar Documento</button>
+        `;
+
+        documentosContainer.appendChild(documentoItem);
+        documentoIndex++;
+    }
+
+    function eliminarDocumento(button) {
+        const documentoItem = button.parentElement;
+        documentoItem.remove();
+    }
+
+</script>
+
+
+{% endblock %}

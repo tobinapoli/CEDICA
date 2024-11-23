@@ -1,0 +1,64 @@
+{% extends 'layout.html' %}
+
+{% block content %}
+<form action="{{ url_for('cobro.update_cobro', jinete_id=jinete_id, cobro_id=cobro.id) }}" method="POST" class="form-container" aria-labelledby="form-title">
+    <h1 id="form-title">Modificar Cobro</h1>
+
+    <div class="form-group">
+        <label for="fecha">Fecha de Pago:</label>
+        <div class="input-group">
+            <input type="date" class="form-control" id="fecha" name="fecha" value="{{ form_data.get('fecha', '') }}" required min="1994-01-01" max="{{ current_date }}" aria-describedby="fecha-help">
+        </div>
+        <small id="fecha-help" class="text-muted">Seleccione la fecha de pago</small>
+        {% if errors.get('fecha') %}
+            <small class="text-danger" id="error-fecha">{{ errors['fecha'] }}</small>
+        {% endif %}
+    </div>
+
+    <div class="form-group">
+        <label for="monto">Monto:</label>
+        <input type="number" class="form-control" id="monto" name="monto" placeholder="$ ARS" value="{{ form_data.get('monto', '') }}" required aria-describedby="monto-help">
+        <small id="monto-help" class="text-muted">Ingrese el monto en ARS</small>
+        {% if errors.get('monto') %}
+        <small class="text-danger">{{ errors['monto'] }}</small>
+        {% endif %}
+    </div>
+
+    <div>
+        <label for="medio_de_pago" class="form-label">Medio de Pago:</label>
+        <select class="form-select" id="medio_de_pago" name="medio_de_pago" required aria-describedby="medio-pago-help">
+            <option value="">-- Seleccione --</option>
+            {% for medio in medio_de_pago %}
+            <option value="{{ medio.id }}" {% if form_data.get('medio_de_pago') == medio.id %}selected{% endif %}>
+                {{ medio.nombre }}
+            </option>
+            {% endfor %}
+        </select>
+        <small id="medio-pago-help" class="text-muted">Elija el medio de pago utilizado</small>
+    </div>
+
+    <div class="form-group">
+        <label for="empleado">Empleado:</label>
+        <select id="empleado" name="empleado_id" class="form-control" required aria-describedby="empleado-help">
+            <option value="">-- Seleccione un Empleado --</option>
+            {% for empleado in empleados %}
+                <option value="{{ empleado.id }}" {% if empleado.id == cobro.empleado_id %}selected{% endif %}>
+                    {{ empleado.nombre }} {{ empleado.apellido }}, DNI: {{ empleado.dni }}
+                </option>
+            {% endfor %}
+        </select>
+        <small id="empleado-help" class="text-muted">Seleccione el empleado asociado al cobro</small>
+    </div>
+
+    <div class="form-group">
+        <label for="observaciones">Observaciones:</label>
+        <textarea class="form-control" id="observaciones" name="observaciones" rows="3" maxlength="50" aria-describedby="obs-help">{{ cobro.observaciones }}</textarea>
+        <small id="obs-help" class="text-muted">Puede agregar hasta 50 caracteres</small>
+    </div>
+
+    <button type="submit" class="btn btn-primary" aria-label="Actualizar cobro">Actualizar cobro</button>
+</form>
+
+<script src="{{ url_for('static', filename='js/choice_selector.js') }}"></script>
+<script src="{{ url_for('static', filename='js/create_cobro_validaciones.js') }}"></script>
+{% endblock %}

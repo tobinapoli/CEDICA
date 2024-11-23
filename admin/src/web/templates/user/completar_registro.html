@@ -1,0 +1,23 @@
+{% extends "layout.html" %}
+
+{% block content %}
+    <header class="title-container">
+        <h1 class="mt-4">Completar registro de Google</h1>
+    </header>
+    <main class="container">
+        <h2>Asignar Rol a {{ user.alias }}</h2>
+        <form action="{{ url_for('user.completar_registro', user_id=user.id) }}" method="POST">
+            <div class="mb-3">
+                <label for="role" class="form-label">Seleccionar Rol:</label>
+                <select name="rol_id" id="role" class="form-select">
+                    <option value="">-- Seleccione --</option>
+                    {% for rol in roles %}
+                        <option value="{{ rol.id }}" {% if rol.id == user.role.id %}selected{% endif %}>{{ rol.nombre }}</option>
+                    {% endfor %}
+                </select>
+                
+            </div>
+            <button type="submit" class="btn btn-primary">Aceptar Registro</button>
+        </form>
+    </main>
+{% endblock %}

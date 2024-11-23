@@ -1,0 +1,599 @@
+{% extends "layout.html" %}
+
+{% block title %}Actualizar Jinete/Amazona{% endblock %}
+
+{% block content %}
+{% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+        <div class="flash-messages">
+            {% for category, message in messages %}
+                <div class="alert alert-{{ 'danger' if category == 'error' else 'success' }}">
+                    {{ message }}
+                </div>
+            {% endfor %}
+        </div>
+    {% endif %}
+{% endwith %}
+<h1>Actualizar Jinete/Amazona</h1>
+
+<form class="form-container" action="{{ url_for('jinete_amazona.update', id=jinete_amazona.id) }}" method="POST">
+    <h2>Jinete/Amazona</h2>
+    {{ form.hidden_tag() }} 
+
+    
+    <div class="form-group">
+        <label for="nombre">Nombre:</label>
+        {{ form.nombre(class="form-control", required=True) }}
+    </div>
+
+    <div class="form-group">
+        <label for="apellidos">Apellidos:</label>
+        {{ form.apellido(class="form-control", required=True) }} 
+        <span id="apellidos-error"></span>
+    </div>
+
+    <div class="form-group">
+        <label for="dni">DNI:</label>
+        {{ form.dni(class="form-control", required=True) }}
+        <span id="dni-error"></span>
+    </div>
+    
+    <div class="form-group">
+        <label for="localidad_nacimiento">Localidad de nacimiento:</label>
+        {{ form.localidad_nacimiento(class="form-control", required=True) }}
+        <span id="localidad_nacimiento-error"></span>
+    </div>
+
+    <div class="form-group">
+        <label for="provincia_nacimiento">Provincia:</label>
+        {{ form.provincia_nacimiento(class="form-control", required=True) }}
+        <span id="provincia_nacimiento-error"></span>
+    </div>
+
+    <div class="form-group">
+        <label for="provincia_nacimiento">Provincia</label>
+        <select id="provincia_nacimiento" name="provincia_nacimiento" class="form-control provincia" required>
+            <option value="">Seleccione una opción</option>
+            {% for prov in provincia %}
+                <option value="{{ prov.name }}" {% if prov.name == jinete_amazona.provincia_nacimiento.name %} selected {% endif %}>
+                    {{ prov.value }}
+                </option>
+            {% endfor %}
+        </select>
+        <span id="provincia_nacimiento-error"></span>
+    </div>
+
+
+
+    <div class="form-group">
+        <label for="fecha_nacimiento">Fecha de Nacimiento:</label>
+        {{ form.fecha_nacimiento(class="form-control", required=True) }}
+        <span id="fecha_nacimiento-error"></span>
+    </div>
+
+    <div class="form-group">
+        <label for="telefono">Teléfono:</label>
+        {{ form.telefono(class="form-control", required=True) }}
+        <span id="telefono-error"></span>
+    </div>
+
+    <div class="form-group">
+        <label for="tiene_deuda">Tiene Deuda:</label>
+        {{ form.tiene_deuda(class="form-control", required=True) }}
+        <span id="tiene_deuda-error"></span>
+    </div>
+
+    <div class="form-group">
+        <label for="becado">Becado:</label>
+        {{ form.becado(class="form-control", required=True) }}
+        <span id="becado-error"></span>
+    </div>
+
+    <div class="form-group">
+        <label for="porcentaje_beca">Porcentaje de Beca:</label>
+        {{ form.porcentaje_beca(class="form-control") }}
+        <span id="porcentaje_beca-error"></span>
+    </div>
+
+    <div class="form-group">
+        <label for="profesionales_asociados">Profesionales Asociados:</label>
+        {{ form.profesionales_asociados(class="form-control", required=True) }}
+        <span id="profesionales_asociados-error"></span>
+    </div>
+
+    <div class="form-group">
+        <label for="{{ form.certificado_discapacidad.id }}">Certificado de Discapacidad:</label>
+        {{ form.certificado_discapacidad(class="form-control", required=True) }}
+        <span id="certificado_discapacidad-error"></span>
+    </div>
+
+    <div class="form-group diagnostico-item">
+    <label for="diagnostico_discapacidad">Diagnóstico de Discapacidad</label>
+    <select id="diagnostico_discapacidad" name="diagnostico_discapacidad" class="form-control diagnostico-discapacidad" required>
+        {% for diagnostico in diagnostico_discapacidad %}
+            <option value="{{ diagnostico }}" {% if diagnostico == jinete_amazona.diagnostico_discapacidad %}selected{% endif %}>{{ diagnostico }}</option>
+        {% endfor %}
+    </select>
+    <span id="diagnostico_discapacidad-error"></span>
+    </div>
+
+    <div class="form-group" id="diagnostico_otro_container" style="display: none;">
+        {{ form.diagnostico_otro.label }}
+        {{ form.diagnostico_otro(class="form-control") }}
+        {% if form.diagnostico_otro.errors %}
+            <span class="text-danger">{{ form.diagnostico_otro.errors[0] }}</span>
+        {% endif %}
+    </div>
+
+    <div class="form-group diagnostico-item">
+        <label for="tipo_discapacidad">Tipo de Discapacidad</label>
+        <select id="tipo_discapacidad" name="tipo_discapacidad" class="form-control diagnostico-discapacidad" required>
+            {% for diagnostico in form.tipo_discapacidad.choices %}
+                <option value="{{ diagnostico[0] }}" {% if form.tipo_discapacidad.data == diagnostico[0] %}selected{% endif %}>
+                    {{ diagnostico[1] }}
+                </option>
+            {% endfor %}
+        </select>
+        <span id="tipo_discapacidad-error"></span>
+    </div>
+
+
+     <div class="form-group asignacion-item">
+        <label for="{{ form.asignacion_familiar.id }}">Asignación Familiar:</label>
+        {{ form.asignacion_familiar(class="form-control", required=True) }}
+        <span id="asignacion_familiar-error"></span>
+    </div>
+
+    <div class="form-group asignacion-item">
+    <label for="tipo_asignacion">Tipo de asignación</label>
+    <select id="tipo_asignacion" name="tipo_asignacion" class="form-control tipo-asignacion" required>
+
+        {% for asignacion in form.tipo_asignacion.choices %}
+            <option value="{{ asignacion[0] }}" {% if form.tipo_asignacion.data == asignacion[0] %}selected{% endif %}>
+                {{ asignacion[1] }}
+            </option>
+        {% endfor %}
+    </select>
+        <span id="tipo_asignacion-error"></span>
+    </div>
+
+   <div class="form-group">
+        <label for="{{ form.pensionado.id }}">¿Es beneficiario de alguna pensión?</label>
+        {{ form.pensionado(class="form-control", required=True) }}
+        <span id="pensionado-error"></span>
+    </div>
+
+    <div class="form-group diagnostico-item">
+    <label for="tipo_pension">Tipo de pensión</label>
+        <select id="tipo_pension" name="tipo_pension" class="form-control tipo-pension">
+            {% for pension in form.tipo_pension.choices %}
+                <option value="{{ pension[0] }}" {% if form.tipo_pension.data == pension[0] %}selected{% endif %}>
+                    {{ pension[1] }}
+                </option>
+            {% endfor %}
+        </select>
+        <span id="tipo_pension-error"></span>
+    </div>
+
+    <h2>Situación Previsional</h2>
+    <div class="form-group">
+        <label for="obra_social">Obra Social:</label>
+        <input type="text" name="obra_social" id="obra_social" class="form-control" value="{{ situacion_previsional.obra_social }}" required>
+        {% if form.obra_social.errors %}
+            <div class="alert alert-danger">
+                {% for error in form.obra_social.errors %}
+                    <p>{{ error }}</p>
+                {% endfor %}
+            </div>
+        {% endif %}
+    </div>
+
+    <div class="form-group">
+        <label for="numero_afiliado">Numero de afiliado:</label>
+        <input type="text" name="numero_afiliado" id="numero_afiliado" class="form-control" value="{{ situacion_previsional.numero_afiliado }}" required>
+        {% if form.numero_afiliado.errors %}
+            <div class="alert alert-danger">
+                {% for error in form.numero_afiliado.errors %}
+                    <p>{{ error }}</p>
+                {% endfor %}
+            </div>
+        {% endif %}
+    </div>
+
+    <div class="form-group">
+        <label for="posee_curatela">Posee Curatela:</label>
+        <select id="posee_curatela" class="form-control" value="{{ situacion_previsional.posee_curatela }}" required>
+        <option value="True" {% if situacion_previsional.posee_curatela == 'Si' %}selected{% endif %}>Si</option>
+        <option value="False" {% if situacion_previsional.posee_curatela == 'No' %}selected{% endif %}>No</option>
+        <span id="posee_curatela-error"></span>
+        {% if form.posee_curatela.errors %}
+            <div class="alert alert-danger">
+                {% for error in form.posee_curatela.errors %}
+                    <p>{{ error }}</p>
+                {% endfor %}
+            </div>
+        {% endif %}
+        </select>
+        <span id="posee_curatela-error"></span>
+    </div>
+
+    
+
+    <div class="form-group">
+        <label for="observaciones">Observaciones:</label>
+        <input type="text" name="observaciones" id="observaciones" class="form-control" value="{{ situacion_previsional.observaciones }}" required>
+        {% if form.observaciones.errors %}
+            <div class="alert alert-danger">
+                {% for error in form.observaciones.errors %}
+                    <p>{{ error }}</p>
+                {% endfor %}
+            </div>
+        {% endif %}
+    </div>
+
+    <h2>Institución Escolar</h2>
+    <div class="form-group">
+        <label for="nombre_institucion">Nombre de la Institución:</label>
+        <input type="text" id="nombre_institucion" name="nombre_institucion" class="form-control" value="{{ institucion_escolar.nombre}}" required>
+        {% if form.nombre_institucion.errors %}
+            <span class="text-danger">{{ form.nombre_institucion.errors[0] }}</span>
+        {% endif %}
+    </div>
+
+    <div class="form-group">
+        <label for="direccion_institucion">Dirección:</label>
+        <input type="text" id="direccion_institucion" name="direccion_institucion" class="form-control" value="{{ institucion_escolar.direccion}}" required >
+        {% if form.direccion_institucion.errors %}
+            <span class="text-danger">{{ form.direccion_institucion.errors[0] }}</span>
+        {% endif %}
+    </div>
+
+    <div class="form-group">
+        <label for="telefono_institucion">Teléfono:</label>
+        <input type="text" id="telefono_institucion" name="telefono_institucion" value = "{{ institucion_escolar.telefono }}" class="form-control" >
+        {% if form.telefono_institucion.errors %}
+            <span class="text-danger">{{ form.telefono_institucion.errors[0] }}</span>
+        {% endif %}
+    </div>
+
+    <div class="form-group">
+        <label for="grado_actual">Grado / Año Actual:</label>
+        <input type="text" id="grado_actual" name="grado_actual" class="form-control" value = "{{jinete_amazona.grado_actual}}" required >
+        {% if form.grado_actual.errors %}
+            <span class="text-danger">{{ form.grado_actual.errors[0] }}</span>
+        {% endif %}
+    </div>
+
+    <div class="form-group">
+        <label for="observaciones_institucion">Observaciones:</label>
+        <textarea id="observaciones_institucion" name="observaciones_institucion" class="form-control" value = "{{institucion_escolar.observaciones_institucion}}"></textarea>
+        {% if form.observaciones_institucion.errors %}
+            <span class="text-danger">{{ form.observaciones_institucion.errors[0] }}</span>
+        {% endif %}
+    </div>
+
+    <h2> Domicilio </h2>
+    <div class="form-group">
+    <label for="calle">Calle:</label>
+    <input type="text" id="calle" name="calle" class="form-control" value = "{{direccion_domicilio.calle}}" required>
+    {% if form.calle.errors %}
+        <span id="calle-error" class="text-danger">{{ form.calle.errors[0] }}</span>
+    {% endif %}
+    </div>
+
+    <div class="form-group">
+        <label for="numero">Número:</label>
+        <input type="text" id="numero" name="numero" class="form-control" value = "{{direccion_domicilio.numero}}" required>
+        {% if form.numero.errors %}
+            <span id="numero-error" class="text-danger">{{ form.numero.errors[0] }}</span>
+        {% endif %}
+    </div>
+
+    <div class="form-group">
+        <label for="depto">Departamento:</label>
+        <input type="text" id="depto" name="depto" class="form-control" value = "{{direccion_domicilio.depto}}">
+        {% if form.depto.errors %}
+            <span id="depto-error" class="text-danger">{{ form.depto.errors[0] }}</span>
+        {% endif %}
+    </div>
+
+    <div class="form-group">
+        <label for="localidad">Localidad:</label>
+        <input type="text" id="localidad" name="localidad" class="form-control" value = "{{direccion_domicilio.localidad}}" required>
+        {% if form.localidad.errors %}
+            <span id="localidad-error" class="text-danger">{{ form.localidad.errors[0] }}</span>
+        {% endif %}
+    </div>
+    
+    <div class="form-group">
+    {{ form.provincia.label(class="form-label") }}
+    {{ form.provincia(class="form-control") }}
+    <span id="provincia-error" class="text-danger">{{ form.provincia.errors[0] if form.provincia.errors else '' }}</span>
+    </div>
+    </div>
+
+
+    <h2>Contacto de Emergencia</h2>
+    <div class="form-group">
+        <label for="contacto_nombre">Nombre del Contacto:</label>
+        <input type="text" id="contacto_nombre" name="contacto_nombre" class="form-control" value = "{{contacto_emergencia.nombre}}" required>
+        {% for error in form.contacto_nombre.errors %}
+            <span class="text-danger">{{ error }}</span>
+        {% endfor %}
+    </div>
+
+    <div class="form-group">
+        <label for="contacto_telefono">Teléfono del Contacto:</label>
+         <input type="text" id="contacto_telefono" name="contacto_telefono" class="form-control" value = "{{contacto_emergencia.telefono}}" required>
+        {% for error in form.contacto_telefono.errors %}
+            <span class="text-danger">{{ error }}</span>
+        {% endfor %}
+    </div>
+
+    
+    <h2> Trabajo en la institucion</h2>
+    <div class="form-group trabajo_institucion-item">
+        <label for="propuesta_trabajo">Propuesta de asignación</label>
+        <select id="propuesta_trabajo" name="propuesta_trabajo" class="form-control propuesta_trabajo" required>
+
+           {% for choice in form.propuesta_trabajo.choices %}
+            <p>Choice value: {{ choice[0] }}, Form value: {{ form.propuesta_trabajo.data }}</p>
+            <option value="{{ choice[0] }}" {% if 'TipoPropuesta.' ~ choice[0] == form.propuesta_trabajo.data %}selected{% endif %}>
+                {{ choice[1] }}
+            </option>
+            {% endfor %}
+        </select>
+        <span id="propuesta_trabajo-error"></span>
+        {% if form.propuesta_trabajo.errors %}
+            <div class="alert alert-danger">
+                {% for error in form.propuesta_trabajo.errors %}
+                    <p>{{ error }}</p>
+                {% endfor %}
+            </div>
+        {% endif %}
+    </div>
+
+
+    <div class="form-group trabajo_institucion-item">
+    <label for="sede">Sede</label>
+        <select id="sede" name="sede" class="form-control sede" required>
+            {% for choice in form.sede.choices %}
+
+                <p>Choice value: {{ choice[0] }}, Form value: {{ form.sede.data }}</p>
+                <option value="{{ choice[0] }}" {% if 'TipoSede.' ~ choice[0] == form.sede.data %}selected{% endif %}>
+                    {{ choice[1] }}
+                </option>
+            {% endfor %}
+        </select>
+        <span id="sede-error"></span>
+        {% if form.sede.errors %}
+            <div class="alert alert-danger">
+                {% for error in form.sede.errors %}
+                    <p>{{ error }}</p>
+                {% endfor %}
+            </div>
+        {% endif %}
+    </div>
+
+
+        <div class="form-group trabajo_institucion-item">
+    <label for="condicion">Condición</label>
+    <select id="condicion" name="condicion" class="form-control condicion" required>
+        {% for choice in form.condicion.choices %}
+            <option value="{{ choice[0] }}" {% if 'TipoCondicion.' ~ choice[0] == form.condicion.data %}selected{% endif %}>
+                {{ choice[1] }}
+            </option>
+        {% endfor %}
+    </select>
+    <span id="condicion-error"></span>
+    {% if form.condicion.errors %}
+        <div class="alert alert-danger">
+            {% for error in form.condicion.errors %}
+                <p>{{ error }}</p>
+            {% endfor %}
+        </div>
+    {% endif %}
+</div>
+
+        <h4>Selecciona los días de trabajo</h4>
+        <div class="form-check">
+            <input class="form-check-input" type="checkbox" name="dias_trabajo" value="Lunes" id="lunes" {% if 'Lunes' in form.dias_trabajo.data %}checked{% endif %}>
+            <label class="form-check-label" for="lunes">Lunes</label>
+        </div>
+        <div class="form-check">
+            <input class="form-check-input" type="checkbox" name="dias_trabajo" value="Martes" id="martes" {% if 'Martes' in form.dias_trabajo.data %}checked{% endif %}>
+            <label class="form-check-label" for="martes">Martes</label>
+        </div>
+        <div class="form-check">
+            <input class="form-check-input" type="checkbox" name="dias_trabajo" value="Miercoles" id="miercoles" {% if 'Miercoles' in form.dias_trabajo.data %}checked{% endif %}>
+            <label class="form-check-label" for="miercoles">Miércoles</label>
+        </div>
+        <div class="form-check">
+            <input class="form-check-input" type="checkbox" name="dias_trabajo" value="Jueves" id="jueves" {% if 'Jueves' in form.dias_trabajo.data %}checked{% endif %}>
+            <label class="form-check-label" for="jueves">Jueves</label>
+        </div>
+        <div class="form-check">
+            <input class="form-check-input" type="checkbox" name="dias_trabajo" value="Viernes" id="viernes" {% if 'Viernes' in form.dias_trabajo.data %}checked{% endif %}>
+            <label class="form-check-label" for="viernes">Viernes</label>
+        </div>
+        <div class="form-check">
+            <input class="form-check-input" type="checkbox" name="dias_trabajo" value="Sabado" id="sabado" {% if 'Sabado' in form.dias_trabajo.data %}checked{% endif %}>
+            <label class="form-check-label" for="sabado">Sábado</label>
+        </div>
+        <div class="form-check">
+            <input class="form-check-input" type="checkbox" name="dias_trabajo" value="Domingo" id="domingo" {% if 'Domingo' in form.dias_trabajo.data %}checked{% endif %}>
+            <label class="form-check-label" for="domingo">Domingo</label>
+        </div>
+        <div>
+        {% if empleado %}
+       <div class="form-group">
+            <label for="profesor_id" class="form-label">Selecciona un profesor</label>
+            <select id="profesor_id" name="profesor_id" class="form-control" required>
+                <option value="">Seleccione un profesor</option>
+                {% for prof in empleado %}
+                    <option value="{{ prof.id }}" {% if prof.id == jinete_amazona.profesor_id %}selected{% endif %}>
+                        {{ prof.nombre }} {{ prof.apellido }}
+                    </option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="form-group">
+            <label for="auxiliar_id" class="form-label">Selecciona un auxiliar</label>
+            <select id="auxiliar_id" name="auxiliar_id" class="form-control" required>
+                <option value="">Seleccione un auxiliar</option>
+                {% for aux in empleado %}
+                    <option value="{{ aux.id }}" {% if aux.id == jinete_amazona.auxiliar_id %}selected{% endif %}>
+                        {{ aux.nombre }} {{ aux.apellido }}
+                    </option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="form-group">
+            <label for="conductor_id" class="form-label">Selecciona un conductor</label>
+            <select id="conductor_id" name="conductor_id" class="form-control" required>
+                <option value="">Seleccione un conductor</option>
+                {% for conductor in empleado %}
+                    <option value="{{ conductor.id }}" {% if conductor.id == jinete_amazona.conductor_id %}selected{% endif %}>
+                        {{ conductor.nombre }} {{ conductor.apellido }}
+                    </option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="form-group">
+            <label for="caballo_id" class="form-label">Selecciona un caballo</label>
+            <select id="caballo_id" name="caballo_id" class="form-control" required>
+                <option value="">Seleccione un caballo</option>
+                {% for caballo in caballos %}
+                    <option value="{{ caballo.id }}" {% if caballo.id == jinete_amazona.caballo_id %}selected{% endif %}>
+                        {{ caballo.nombre }}
+                    </option>
+                {% endfor %}
+            </select>
+        </div>
+        {% else %}
+        <p>No hay empleados disponibles.</p>
+        {% endif %}
+    </div>
+       
+    
+
+    <div class="form-group">
+        <button type="submit" id="update-button" class="btn btn-primary" disabled>Modificar Jinete/amazona</button>
+    </div>
+</form>
+<script type="module">
+    import { check_dni_familiar } from "{{ url_for('static', filename='js/jinete_amazona/check/check_dni_familiar.js') }}";
+    import { check_porcentaje_beca } from "{{ url_for('static', filename='js/jinete_amazona/check/check_porcentaje_beca.js') }}";
+    import { toggle_update_jinete_button } from "{{ url_for('static', filename='js/jinete_amazona/toggle/toggle_update_jinete_button.js') }}";
+    import { toggle_porcentaje_beca } from "{{ url_for('static', filename='js/jinete_amazona/toggle/toggle_porcentaje_beca.js') }}";
+    import { check_becado } from "{{ url_for('static', filename='js/jinete_amazona/check/check_becado.js') }}";
+    import { check_certificado } from "{{ url_for('static', filename='js/jinete_amazona/check/check_certificado.js') }}";
+    import { toggle_diagnostico_discapacidad } from "{{ url_for('static', filename='js/jinete_amazona/toggle/toggle_diagnostico_discapacidad.js') }}";
+    import { toggle_tipo_discapacidad } from "{{ url_for('static', filename='js/jinete_amazona/toggle/toggle_tipo_discapacidad.js') }}";
+    import { toggle_tipo_asignacion } from "{{ url_for('static', filename='js/jinete_amazona/toggle/toggle_tipo_asignacion.js') }}";
+    import { check_asignacion } from "{{ url_for('static', filename='js/jinete_amazona/check/check_asignacion.js') }}";
+    import { toggle_tipo_pension } from "{{ url_for('static', filename='js/jinete_amazona/toggle/toggle_tipo_pension.js') }}";
+    import { check_pension } from "{{ url_for('static', filename='js/jinete_amazona/check/check_pension.js') }}";
+    import { check_telefono } from "{{ url_for('static', filename='js/jinete_amazona/check/check_telefono.js') }}";
+    
+    const dniInput = document.getElementById('dni');
+    const porcentajeInput = document.getElementById('porcentaje_beca');
+    const becado = document.getElementById('becado');
+    const certificadoDiscapacidadSelect = document.getElementById('certificado_discapacidad');
+    const asignacionFamiliarSelect = document.getElementById('asignacion_familiar');
+    const pensionadoSelect = document.getElementById('pensionado');
+
+
+
+    // Eventos para DNI
+    dniInput.addEventListener('input', () => {
+        check_dni_familiar(); 
+        toggle_update_jinete_button(); 
+    });
+
+
+
+    porcentajeInput.addEventListener('input', () => {
+        check_porcentaje_beca();
+        toggle_update_jinete_button(); 
+    });
+
+    porcentajeInput.addEventListener('input', () => {
+        check_becado();
+        toggle_porcentaje_beca();
+    });
+
+
+    certificadoDiscapacidadSelect.addEventListener('change', () => {
+        check_certificado();
+        toggle_tipo_discapacidad();
+        toggle_diagnostico_discapacidad();
+    });
+
+
+    asignacionFamiliarSelect.addEventListener('change', () => {
+        check_asignacion();
+        toggle_tipo_asignacion();
+    });
+
+
+    pensionadoSelect.addEventListener('change', () => {
+        check_pension();
+        toggle_tipo_pension();
+    });
+
+    document.getElementById('telefono').addEventListener('input', check_telefono);
+
+    toggle_update_jinete_button();
+</script>
+
+<script>
+    document.getElementById('diagnostico_discapacidad').addEventListener('change', function() {
+    
+    var selectedValue = this.value;
+
+    
+    if (selectedValue === 'OTRO') {
+        document.getElementById('diagnostico_otro_container').style.display = 'block';
+        document.getElementById('diagnostico_otro').required = true; 
+    } else {
+        document.getElementById('diagnostico_otro_container').style.display = 'none';
+        document.getElementById('diagnostico_otro').value = '';  
+        document.getElementById('diagnostico_otro').required = false;  
+    }
+});
+
+
+document.getElementById('certificado_discapacidad').addEventListener('change', function() {
+    
+    var certificadoValue = this.value;
+    
+    
+    var diagnosticoSelect = document.getElementById('diagnostico_discapacidad');
+    var diagnosticoOtroContainer = document.getElementById('diagnostico_otro_container');
+    var diagnosticoOtroInput = document.getElementById('diagnostico_otro');
+    
+    
+    if (certificadoValue === 'False') {
+        diagnosticoSelect.disabled = true;
+        diagnosticoSelect.value = '';  
+        
+   
+        diagnosticoOtroContainer.style.display = 'none';
+        diagnosticoOtroInput.value = ''; 
+        diagnosticoOtroInput.required = false;  
+    } else {
+        diagnosticoSelect.disabled = false;  
+        
+  
+        if (diagnosticoSelect.value === 'OTRO') {
+            diagnosticoOtroContainer.style.display = 'block';
+            diagnosticoOtroInput.required = true;  
+        }
+    }
+});
+
+</script>
+
+
+{% endblock %}

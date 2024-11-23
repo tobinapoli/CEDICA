@@ -1,0 +1,172 @@
+{% extends "layout.html" %}
+
+{% block title %} Lista de Contenidos {% endblock %}
+
+{% block content %}
+    <header class="title-container">
+        <h1 class="mt-4">Lista de Contenidos</h1>  
+        <nav class="mb-4">
+            <ul>
+                <li><a class="btn btn-primary" href="{{ url_for('contenido.create') }}">Crear Contenido</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main class="container">
+        <section id="filtros" class="mb-4">
+            <h2>Filtrar y Ordenar Contenidos</h2>
+            <form action="{{ url_for('contenido.index') }}" method="GET" class="row g-3">
+                <div class="col-md-3">
+                    <label for="titulo" class="form-label">Título:</label>
+                    <input type="text" class="form-control" id="titulo" name="titulo" value="{{ request.args.get('titulo', '') }}">
+                </div>
+    
+                <div class="col-md-3">
+                    <label for="autor" class="form-label">Autor:</label>
+                    <input type="text" class="form-control" id="autor" name="autor" value="{{ request.args.get('autor', '') }}">
+                </div>
+    
+                <div class="col-md-3">
+                    <label for="estado" class="form-label">Estado:</label>
+                    <select id="estado" name="estado" class="form-select">
+                        <option value="">-- Seleccionar --</option>
+                        {% for estado in estados %}
+                        <option value="{{ estado.name }}" {% if request.args.get('estado') == estado.name %}selected{% endif %}>{{ estado.value }}</option>
+
+                        {% endfor %}
+                    </select>
+                </div>
+    
+                <div class="col-md-3">
+                    <label for="ordenar_por" class="form-label">Ordenar por:</label>
+                    <select id="ordenar_por" name="ordenar_por" class="form-select">
+                        <option value="titulo" {% if request.args.get('ordenar_por') == 'titulo' %}selected{% endif %}>Título</option>
+                        <option value="created_at" {% if request.args.get('ordenar_por') == 'created_at' %}selected{% endif %}>Fecha de Creación</option>
+                    </select>
+                </div>
+    
+                <div class="col-md-3">
+                    <label for="orden" class="form-label">Orden:</label>
+                    <select id="orden" name="orden" class="form-select">
+                        <option value="asc" {% if request.args.get('orden') == 'asc' %}selected{% endif %}>Ascendente</option>
+                        <option value="desc" {% if request.args.get('orden') == 'desc' %}selected{% endif %}>Descendente</option>
+                    </select>
+                </div>
+    
+                <div class="col-auto" style="margin-top: 3rem;">
+                    <button type="submit" class="btn btn-primary">Buscar</button>
+                </div>
+            </form>
+        </section>
+        {% if contenidos %}
+            <div class="table-responsive">
+                <table class="table-responsive table-bordered" aria-label="Lista de contenidos">
+                    <thead>
+                        <tr>
+                            <th>Titulo</th>
+                            <th>Autor</th>
+                            <th>Fecha de Creacion</th>
+                            <th>Fecha de Modificacion</th>
+                            <th>Estado</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for contenido in contenidos %}
+                            <tr>
+                                <td>{{ contenido.titulo }}</td>
+                                <td>{{ contenido.autor.alias }}</td>
+                                <td>{{ contenido.created_at.strftime('%d-%m-%Y') }}</td>
+                                <td>{{ contenido.updated_at.strftime('%d-%m-%Y')}}</td>
+                                <td>{{ contenido.estado.value }}</td>
+                                <td>
+                                    <a class="btn btn-primary" href="{{ url_for('contenido.show', id=contenido.id) }}">Ver</a>
+                                    {% if contenido.estado.value == 'Publicado' %}
+                                        
+                                        <form action="{{ url_for('contenido.archivar', id=contenido.id) }}" method="POST" onsubmit="return confirm('¿Estás seguro que deseas archivar este contenido?');">
+                                            <button type="submit" class="btn btn-warning mb-2" aria-label="Archivar este contenido">Archivar</button>
+                                        </form>
+                                        
+                                    {% elif contenido.estado.value == 'Archivado' %}
+                                        
+                                        <form action="{{ url_for('contenido.publicar', id=contenido.id) }}" method="POST" onsubmit="return confirm('¿Estás seguro que deseas publicar este contenido?');">
+                                            <button type="submit" class="btn btn-success mb-2" aria-label="Publicar este contenido">Publicar</button>
+                                        </form>
+                                        
+                                        
+                                    {% else %}
+                                    
+                                        <form action="{{ url_for('contenido.publicar', id=contenido.id) }}" method="POST" onsubmit="return confirm('¿Estás seguro que deseas publicar este contenido?');">
+                                            <button type="submit" class="btn btn-success mb-2" aria-label="Publicar este contenido">Publicar</button>
+                                        </form>
+                                    
+                                        
+                                        <form action="{{ url_for('contenido.archivar', id=contenido.id) }}" method="POST" onsubmit="return confirm('¿Estás seguro que deseas archivar este contenido?');">
+                                            <button type="submit" class="btn btn-warning mb-2" aria-label="Archivar este contenido">Archivar</button>
+                                        </form>
+                                        
+                                    {% endif %}
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        {% else %}
+            <p>No hay contenidos para mostrar.</p>
+        {% endif %}
+        
+        <nav aria-label="Paginación de contenidos">
+            <ul class="pagination">
+                {% if page > 1 %}
+                    <li class="page-item">
+                        <a class="page-link" href="?page={{ page - 1 }}" aria-label="Anterior">Anterior</a>
+                    </li>
+                {% else %}
+                    <li class="page-item disabled">
+                        <span class="page-link" aria-hidden="true">Anterior</span>
+                    </li>
+                {% endif %}
+
+                {% if start > 1 %}
+                    <li class="page-item">
+                        <a class="page-link" href="?page=1">1</a>
+                    </li>
+                    {% if start > 2 %}
+                        <li class="page-item disabled">
+                            <span class="page-link">...</span>
+                        </li>
+                    {% endif %}
+                {% endif %}
+
+                {% for p in range(start, end + 1) %}
+                    <li class="page-item {% if p == page %}active{% endif %}">
+                        <a class="page-link" href="?page={{ p }}" aria-label="Página {{ p }}">{{ p }}</a>
+                    </li>
+                {% endfor %}
+
+                {% if end < total_pages %}
+                    {% if end < total_pages - 1 %}
+                        <li class="page-item disabled">
+                            <span class="page-link">...</span>
+                        </li>
+                    {% endif %}
+                    <li class="page-item">
+                        <a class="page-link" href="?page={{ total_pages }}">{{ total_pages }}</a>
+                    </li>
+                {% endif %}
+
+                {% if page < total_pages %}
+                    <li class="page-item">
+                        <a class="page-link" href="?page={{ page + 1 }}" aria-label="Siguiente">Siguiente</a>
+                    </li>
+                {% else %}
+                    <li class="page-item disabled">
+                        <span class="page-link" aria-hidden="true">Siguiente</span>
+                    </li>
+                {% endif %}
+            </ul>
+        </nav>
+    </main>
+{% endblock %}
+

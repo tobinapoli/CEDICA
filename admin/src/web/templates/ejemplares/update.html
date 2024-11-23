@@ -1,0 +1,169 @@
+{% extends "layout.html" %}
+
+{% block title %}Editar Ejemplar{% endblock %}
+
+{% block content %}
+
+    <header class="title-container">
+        <h1 class="mt-4">Editar ejemplar {{ejemplar.nombre}}</h1>
+    </header>
+    <form action="{{ url_for('ejemplares.update', id=ejemplar.id) }}" method="POST" class="form-container">
+
+        <h2>Datos del Ejemplar</h2>
+        <div class="form-group">
+            <label for="nombre">Nombre</label>
+            <input type="text" id="nombre" name="nombre" class="form-control" value="{{ ejemplar.nombre }}" required aria-label="Nombre del ejemplar">
+        </div>
+
+        <div class="form-group">
+            <label for="fecha_nacimiento">Fecha de nacimiento</label>
+            <input type="date" id="fecha_nacimiento" name="fecha_nacimiento" class="form-control" value="{{ ejemplar.fecha_nacimiento }}" required aria-label="Fecha de nacimiento del ejemplar">
+        </div>
+
+        <div class="form-group">
+            <label for="genero" class="form-label">Género</label>
+            <input type="text" id="genero" name="genero" class="form-control" value="{{ ejemplar.genero }}" required aria-label="Género del ejemplar">
+        </div>
+
+        <div class="form-group">
+            <label for="raza" class="form-label">Raza</label>
+            <input type="text" id="raza" name="raza" class="form-control" value="{{ ejemplar.raza }}" required aria-label="Raza del ejemplar">
+        </div>
+
+        <div class="form-group">
+            <label for="pela" class="form-label">Pelaje</label>
+            <input type="text" id="pela" name="pela" class="form-control" value="{{ ejemplar.pela }}" required aria-label="Pelaje del ejemplar">
+        </div>
+
+        <div class="form-group">
+            <label for="tipo_de_adquisicion" class="form-label">Tipo de Adquisición</label>
+            <select id="tipo_de_adquisicion" name="tipo_de_adquisicion" class="form-control" required aria-label="Tipo de adquisición del ejemplar">
+                <option value="compra" {% if ejemplar.tipo_de_adquisicion == 'compra' %}selected{% endif %}>Compra</option>
+                <option value="donacion" {% if ejemplar.tipo_de_adquisicion == 'donacion' %}selected{% endif %}>Donación</option>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label for="sede" class="form-label">Sede</label>
+            <input type="text" id="sede" name="sede" class="form-control" value="{{ ejemplar.sede }}" required aria-label="Sede del ejemplar">
+        </div>
+
+        <div class="form-group">
+            <label for="entrenadores" class="form-label">Selecciona uno o más Entrenadores</label>
+            <input type="text" id="buscar-entrenador" class="form-control" placeholder="Buscar entrenador..." aria-label="Buscar entrenador">
+            <div id="resultados-busqueda" class="list-group mt-2"></div>
+        </div>
+
+        <div class="form-group">
+            <h4>Entrenadores seleccionados:</h4>
+            <ul id="entrenadores-seleccionados" class="entrenadores-list">
+                {% for entrenador in ejemplar.entrenadores %}
+                <li data-id="{{ entrenador.id }}">
+                    {{ entrenador.nombre }} {{ entrenador.apellido }} ({{ entrenador.dni }})
+                    <button type="button" class="btn btn-danger ms-2" onclick="deseleccionarEntrenador({{ entrenador.id }})">❌</button>
+                </li>
+                {% endfor %}
+            </ul>
+        </div>
+
+        <!-- Actualizamos el valor del campo oculto usando entrenadores_ejemplar -->
+        <input type="hidden" name="entrenadores" id="selected_entrenadores_input" value="{{ entrenadores_ejemplar | join(',') }}">
+
+        <div class="form-group">
+            <label for="tipo_jinete" class="form-label">Tipo de Jinete</label>
+            <select id="tipo_jinete" name="tipo_jinete" class="form-control" aria-label="Tipo de jinete del ejemplar">
+                <option value="">Seleccione una opción</option>
+                {% for tipo_de_jinete in tipos_de_jinete %}
+                <option value="{{ tipo_de_jinete.id }}" {% if ejemplar.tipo_jinete == tipo_de_jinete.id %}selected{% endif %}>{{ tipo_de_jinete.nombre }}</option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label for="fecha_ingreso" class="form-label">Fecha de ingreso</label>
+            <input type="date" id="fecha_ingreso" name="fecha_ingreso" class="form-control" value="{{ ejemplar.fecha_ingreso }}" required aria-label="Fecha de ingreso del ejemplar">
+        </div>
+
+        <div class="form-group">
+            <button type="submit" class="btn btn-primary">Guardar cambios</button>
+        </div>
+    </form>
+
+    <script>
+        const entrenadores = {{ empleados | tojson }};
+        const buscarInput = document.getElementById('buscar-entrenador');
+        const resultadosBusqueda = document.getElementById('resultados-busqueda');
+        const entrenadoresSeleccionadosUl = document.getElementById('entrenadores-seleccionados');
+        const selectedEntrenadoresInput = document.getElementById('selected_entrenadores_input');
+        let entrenadoresSeleccionados = {{ entrenadores_ejemplar | tojson }};
+
+        // Inicializar la lista de entrenadores seleccionados en el input oculto
+        actualizarCampoOculto();
+
+        buscarInput.addEventListener('input', function() {
+            const query = buscarInput.value.toLowerCase();
+            resultadosBusqueda.innerHTML = '';
+            if (query.length > 0) {
+                entrenadores
+                    .filter(entrenador => 
+                        entrenador.nombre.toLowerCase().includes(query) || 
+                        entrenador.apellido.toLowerCase().includes(query) || 
+                        entrenador.dni.includes(query)
+                    )
+                    .forEach(entrenador => {
+                        const item = document.createElement('a');
+                        item.classList.add('list-group-item', 'list-group-item-action');
+                        item.textContent = `${entrenador.nombre} ${entrenador.apellido} (${entrenador.dni})`;
+                        item.dataset.id = entrenador.id;
+
+                        item.addEventListener('click', function() {
+                            agregarEntrenador(entrenador);
+                            buscarInput.value = '';
+                            resultadosBusqueda.innerHTML = '';
+                        });
+
+                        resultadosBusqueda.appendChild(item);
+                    });
+            }
+        });
+
+        function agregarEntrenador(entrenador) {
+            if (entrenadoresSeleccionados.includes(entrenador.id)) return;
+
+            entrenadoresSeleccionados.push(entrenador.id);
+            const li = document.createElement('li');
+            li.setAttribute('data-id', entrenador.id);
+            li.textContent = `${entrenador.nombre} ${entrenador.apellido} (${entrenador.dni})`;
+
+            const removeButton = document.createElement('button');
+            removeButton.textContent = '❌';
+            removeButton.classList.add('btn', 'btn-danger', 'ms-2');
+            removeButton.addEventListener('click', function() {
+                li.remove();
+                entrenadoresSeleccionados = entrenadoresSeleccionados.filter(e => e !== entrenador.id);
+                actualizarCampoOculto();
+            });
+
+            li.appendChild(removeButton);
+            entrenadoresSeleccionadosUl.appendChild(li);
+            actualizarCampoOculto();
+        }
+
+        function actualizarCampoOculto() {
+            selectedEntrenadoresInput.value = entrenadoresSeleccionados.join(',');
+        }
+
+        function deseleccionarEntrenador(id) {
+            // Remover el entrenador del array de seleccionados
+            entrenadoresSeleccionados = entrenadoresSeleccionados.filter(e => e !== id);
+            actualizarCampoOculto();
+
+            // Remover el elemento <li> de la lista
+            const li = entrenadoresSeleccionadosUl.querySelector(`li[data-id="${id}"]`);
+            if (li) {
+                li.remove();
+            }
+        }
+    </script>
+
+{% endblock %}

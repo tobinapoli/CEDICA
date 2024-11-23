@@ -1,0 +1,86 @@
+{% extends "layout.html" %}
+
+{% block title %}Detalles del Familiar Responsable{% endblock %}
+
+{% block content %}
+<h1 class="text-center mb-4">Detalles del Familiar Responsable</h1>
+<main class="container">
+    <div class="btn-group mb-3" role="group" aria-label="Secciones">
+        <button id="btn-info" type="button" class="btn btn-secondary" onclick="showSection('info')">Información Personal</button>
+        <button id="btn-domicilio" type="button" class="btn btn-secondary" onclick="showSection('domicilio')">Domicilio</button>
+    </div>
+
+    <div id="section-info">
+        <h2>Información Personal</h2>
+        <table class="table-responsive table-bordered">
+            <tr>
+                <th>Parentesco:</th>
+                <td>{{ familiar.parentesco }}</td>
+            </tr>
+            <tr>
+                <th>Nombre:</th>
+                <td>{{ familiar.nombre }}</td>
+            </tr>
+            <tr>
+                <th>Apellido:</th>
+                <td>{{ familiar.apellido }}</td>
+            </tr>
+            <tr>
+                <th>DNI:</th>
+                <td>{{ familiar.dni }}</td>
+            </tr>
+            <tr>
+                <th>Celular:</th>
+                <td>{{ familiar.celular }}</td>
+            </tr>
+            <tr>
+                <th>Email:</th>
+                <td>{{ familiar.email }}</td>
+            </tr>
+            <tr>
+                <th>Nivel de Escolaridad:</th>
+                <td>{{ familiar.nivel_escolaridad.value }}</td>
+            </tr>
+            <tr>
+                <th>Actividad u Ocupación:</th>
+                <td>{{ familiar.actividad_ocupacion }}</td>
+            </tr>
+        </table>
+    </div>
+
+    <div id="section-domicilio" style="display:none;">
+        <h2>Domicilio</h2>
+        <table class="table-responsive table-bordered">
+            <tr>
+                <th>Calle:</th>
+                <td>{{ domicilio.calle }}</td>
+            </tr>
+            <tr>
+                <th>Número:</th>
+                <td>{{ domicilio.numero }}</td>
+            </tr>
+            <tr>
+                <th>Departamento:</th>
+                <td>{{ domicilio.depto }}</td>
+            </tr>
+            <tr>
+                <th>Localidad:</th>
+                <td>{{ domicilio.localidad }}</td>
+            </tr>
+            <tr>
+                <th>Provincia:</th>
+                <td>{{ domicilio.provincia.value }}</td>
+            </tr>
+        </table>
+    </div>
+
+  
+</main>
+
+<script>
+    function showSection(section) {
+        document.getElementById('section-info').style.display = section === 'info' ? 'block' : 'none';
+        document.getElementById('section-domicilio').style.display = section === 'domicilio' ? 'block' : 'none';
+    }
+</script>
+{% endblock %}

@@ -1,0 +1,342 @@
+{% extends "layout.html" %}
+
+{% block title %}Lista de Jinetes y Amazonas{% endblock %}
+
+{% block content %}
+<header class="title-container">
+    <h1 class="mt-4">Lista de Jinetes y Amazonas</h1>
+    <nav class="mb-4">
+        <ul>
+            <li><a class="btn btn-primary" href="{{ url_for('jinete_amazona.create') }}">Agregar Jinete/Amazona</a></li>
+        </ul>
+        <ul>
+            <li><a href="/cobros/create" class="btn btn-secondary">Registrar Cobro</a></li>
+        </ul>
+    </nav>
+</header>
+
+<main class="container">
+    <!-- Sección de Jinetes con filtros -->
+    <div class="btn-group mb-3" role="group" aria-label="Secciones">
+        <button id="btn-jinetes" type="button" class="btn btn-secondary" onclick="showSection('jinetes')">Jinetes y Amazonas</button>
+        <button id="btn-docs" type="button" class="btn btn-secondary" onclick="showSection('docs')">Documentos</button>
+    </div>
+
+    <!-- Sección de Jinetes y Amazonas -->
+    <div id="section-jinetes">
+        <section id="filtros" class="mb-4">
+            <h2>Filtrar y Ordenar Jinetes y Amazonas</h2>
+            <form action="{{ url_for('jinete_amazona.index') }}" method="GET" class="row g-3">
+                <div class="col-md-3">
+                    <label for="nombre" class="form-label">Nombre:</label>
+                    <input type="text" class="form-control" id="nombre" name="nombre" value="{{ request.args.get('nombre', '') }}">
+                </div>
+
+                <div class="col-md-3">
+                    <label for="apellido" class="form-label">Apellido:</label>
+                    <input type="text" class="form-control" id="apellido" name="apellido" value="{{ request.args.get('apellido', '') }}">
+                </div>
+
+                <div class="col-md-3">
+                    <label for="dni" class="form-label">DNI:</label>
+                    <input type="text" class="form-control" id="dni" name="dni" value="{{ request.args.get('dni', '') }}">
+                </div>
+                
+                <div class="col-md-3">
+                    <label for="profesionales_asociados" class="form-label">Buscar Profesionales Asociados:</label>
+                    <input type="text" class="form-control" id="profesionales_asociados" name="profesionales_asociados" value="{{ request.args.get('profesionales_asociados', '') }}" placeholder="Ingresa cualquier texto...">
+                </div>
+
+                <div class="col-md-3">
+                    <label for="ordenar_por" class="form-label">Ordenar por:</label>
+                    <select id="ordenar_por" name="ordenar_por" class="form-select">
+                        <option value="nombre" {% if request.args.get('ordenar_por') == 'nombre' %}selected{% endif %}>Nombre</option>
+                        <option value="apellido" {% if request.args.get('ordenar_por') == 'apellido' %}selected{% endif %}>Apellido</option>
+                        <option value="fecha_nacimiento" {% if request.args.get('ordenar_por') == 'fecha_nacimiento' %}selected{% endif %}>Fecha de Nacimiento</option>
+                    </select>
+                </div>
+
+                <div class="col-md-3">
+                    <label for="orden" class="form-label">Orden:</label>
+                    <select id="orden" name="orden" class="form-select">
+                        <option value="asc" {% if request.args.get('orden') == 'asc' %}selected{% endif %}>Ascendente</option>
+                        <option value="desc" {% if request.args.get('orden') == 'desc' %}selected{% endif %}>Descendente</option>
+                    </select>
+                </div>
+
+                <div class="col-auto" style="margin-top: 3rem;">
+                    <button type="submit" class="btn btn-primary">Buscar</button>
+                </div>
+            </form>
+        </section>
+
+    
+
+    <section id="jinetes_amazonas">
+        {% if jinetes_amazonas %}
+            <div class="table-responsive">
+                <table class="table-responsive table-bordered">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Nombre</th>
+                            <th>Apellido</th>
+                            <th>DNI</th>
+                            <th>Fecha de Nacimiento</th>
+                            <th>Profesional Asociado</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for jinete_amazona in jinetes_amazonas %}
+                            <tr>
+                                
+                                <td>{{ jinete_amazona.id }}</td>
+                                <td>{{ jinete_amazona.nombre }}</td>
+                                <td>{{ jinete_amazona.apellido }}</td>
+                                <td>{{ jinete_amazona.dni }}</td>
+                                <td>{{ jinete_amazona.fecha_nacimiento.strftime('%Y-%m-%d') }}</td>
+                                <td>{{ jinete_amazona.profesionales_asociados }} </td>
+                                <td>
+                                    <a class="btn btn-info btn-sm" href="{{ url_for('jinete_amazona.show', id=jinete_amazona.id) }}" aria-label="Ver detalles de {{ jinete_amazona.nombre }} {{ jinete_amazona.apellido }}">Ver</a>
+                                    <form action="{{ url_for('jinete_amazona.delete', id=jinete_amazona.id) }}" method="POST" style="display:inline;">
+                                        <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('¿Estás seguro que deseas eliminar este jinete/amazona?');" aria-label="Eliminar {{ jinete_amazona.nombre }} {{ jinete_amazona.apellido }}">Eliminar</button>
+                                       
+                                    </form>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+                <nav aria-label="Page navigation">
+                <ul class="pagination justify-content-center">
+                    {% if current_page > 1 %}
+                        <li class="page-item">
+                            <a class="page-link" href="{{ url_for('jinete_amazona.index', page=current_page - 1, nombre=request.args.get('nombre'), tipo_de_jinete=request.args.get('tipo_de_jinete'), order_by=request.args.get('order_by'), order_direction=request.args.get('order_direction')) }}" aria-label="Anterior">
+                                Anterior
+                            </a>
+                        </li>
+                    {% else %}
+                        <li class="page-item disabled">
+                            <span class="page-link">Anterior</span>
+                        </li>
+                    {% endif %}
+
+                    {% if start > 1 %}
+                        <li class="page-item">
+                            <a class="page-link" href="{{ url_for('jinete_amazona.index', page=1, nombre=request.args.get('nombre'), tipo_de_jinete=request.args.get('tipo_de_jinete'), order_by=request.args.get('order_by'), order_direction=request.args.get('order_direction')) }}">1</a>
+                        </li>
+                        {% if start > 2 %}
+                            <li class="page-item disabled">
+                                <span class="page-link">...</span>
+                            </li>
+                        {% endif %}
+                    {% endif %}
+
+                    {% for page_num in range(start, end + 1) %}
+                        <li class="page-item {% if page_num == current_page %}active{% endif %}">
+                            <a class="page-link" href="{{ url_for('jinete_amazona.index', page=page_num, nombre=request.args.get('nombre'), tipo_de_jinete=request.args.get('tipo_de_jinete'), order_by=request.args.get('order_by'), order_direction=request.args.get('order_direction')) }}">{{ page_num }}</a>
+                        </li>
+                    {% endfor %}
+
+                    {% if end < total_pages %}
+                        {% if end < total_pages - 1 %}
+                            <li class="page-item disabled">
+                                <span class="page-link">...</span>
+                            </li>
+                        {% endif %}
+                        <li class="page-item">
+                            <a class="page-link" href="{{ url_for('jinete_amazona.index', page=total_pages, nombre=request.args.get('nombre'), tipo_de_jinete=request.args.get('tipo_de_jinete'), order_by=request.args.get('order_by'), order_direction=request.args.get('order_direction')) }}">{{ total_pages }}</a>
+                        </li>
+                    {% endif %}
+
+                    {% if current_page < total_pages %}
+                        <li class="page-item">
+                            <a class="page-link" href="{{ url_for('jinete_amazona.index', page=current_page + 1, nombre=request.args.get('nombre'), tipo_de_jinete=request.args.get('tipo_de_jinete'), order_by=request.args.get('order_by'), order_direction=request.args.get('order_direction')) }}" aria-label="Siguiente">
+                                Siguiente
+                            </a>
+                        </li>
+                    {% else %}
+                        <li class="page-item disabled">
+                            <span class="page-link">Siguiente</span>
+                        </li>
+                    {% endif %}
+                </ul>
+            </nav>
+
+             
+            </div>
+        {% else %}
+            <p>No hay jinetes/amazonas registrados.</p>
+        {% endif %}
+    </section>
+    </div>
+     <!-- Sección de Documentos -->
+    <div id="section-docs" style="display:none;">
+        <section>
+            <h2>Filtrar y Ordenar Documentos</h2>
+            <form action="{{ url_for('jinete_amazona.index', section='docs') }}" method="GET" class="row g-3 mb-4">
+                <input type="hidden" name="section" value="docs"> 
+                <div class="col-md-3">
+                    <label for="titulo" class="form-label">Título:</label>
+                    <input type="text" class="form-control" id="titulo" name="titulo" value="{{ request.args.get('titulo', '') }}">
+                </div>
+                <div class="col-md-3">
+                    <label for="tipo_documento" class="form-label">Tipo de Documento:</label>
+                    <select id="tipo_documento" name="tipo_documento" class="form-select">
+                        <option value="">Seleccione una opción</option>
+                       
+                        <option value="entrevista">Entrevista</option>
+                        <option value="evaluación">Evaluación</option>
+                        <option value="planificaciones">Planificaciones</option>
+                        <option value="evolución">Evolución</option>
+                        <option value="crónicas">Crónicas</option>
+                        <option value="documental">Documental</option>
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <label for="order_by2" class="form-label">Ordenar por:</label>
+                    <select id="order_by2" name="order_by2" class="form-select">
+                        <option value="filename" {% if request.args.get('order_by2') == 'filename' %}selected{% endif %}>Título</option>
+                        <option value="fecha_subida" {% if request.args.get('order_by2') == 'fecha_subida' %}selected{% endif %}>Fecha de Subida/Enlace</option>
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <label for="order_direction2" class="form-label">Dirección:</label>
+                    <select id="order_direction2" name="order_direction2" class="form-select">
+                        <option value="asc" {% if request.args.get('order_direction2') == 'asc' %}selected{% endif %}>Ascendente</option>
+                        <option value="desc" {% if request.args.get('order_direction2') == 'desc' %}selected{% endif %}>Descendente</option>
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <button type="submit" class="btn btn-primary">Buscar</button>
+                </div>
+            </form>
+            {% if documentos %}
+            <table class="table-responsive table-bordered">
+                <thead>
+                    <tr>
+                        <th>Titular</th>
+                        <th>Nombre del Archivo</th>
+                        <th>Tipo de Documento</th>
+                        <th>Fecha de Subida</th>
+                        <th>Acciones</th>
+
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for item in documentos %}
+                    <tr>
+                        <td>
+                            <a href="{{ url_for('jinete_amazona.show', id=item.jinetes.id) }}">
+                                {{ item.jinetes.nombre }}
+                            </a>
+                        </td>
+                        <td>{{ item.documento.filename }}</td>
+                        <td>{{ item.documento.document_type.value }}</td>
+                        <td>{{ item.documento.created_at.strftime('%d/%m/%Y') }}</td>
+
+                        <td>
+                            {% if item.documento.is_link %}
+                            <a href="{{ item.documento.filename }}" target="_blank" class="btn btn-sm btn-primary">Abrir enlace</a>
+                            {% else %}
+                            <a href="{{ url_for('documentos.show', document_id=item.documento.id) }}" target="_blank" class="btn btn-sm btn-info">Ver</a>
+                            <a href="{{ url_for('documentos.download', document_id=item.documento.id) }}" download class="btn btn-sm btn-success">Descargar</a>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            <nav aria-label="Page navigation">
+                <ul class="pagination justify-content-center">
+                    <!-- Botón "Anterior" -->
+                    {% if current_page2 > 1 %}
+                        <li class="page-item">
+                            <a class="page-link" href="?page2={{ current_page2 - 1 }}&section=docs" aria-label="Anterior">
+                                Anterior
+                            </a>
+                        </li>
+                    {% else %}
+                        <li class="page-item disabled">
+                            <span class="page-link">Anterior</span>
+                        </li>
+                    {% endif %}
+                    
+                    <!-- Paginación: si 'start' es mayor que 1, mostrar el botón para ir a la primera página -->
+                    {% if start2 > 1 %}
+                        <li class="page-item">
+                            <a class="page-link" href="?page2=1&section=docs">1</a>
+                        </li>
+                        {% if start2 > 2 %}
+                            <li class="page-item disabled">
+                                <span class="page-link">...</span>
+                            </li>
+                        {% endif %}
+                    {% endif %}
+                    
+                    <!-- Mostrar las páginas intermedias, desde 'start' hasta 'end' -->
+                    {% for page_num in range(start2, end2 + 1) %}
+                        {% if page_num <= total_pages2 %}
+                            <li class="page-item {% if page_num == current_page2 %}active{% endif %}">
+                                <a class="page-link" href="?page2={{ page_num }}&section=docs">{{ page_num }}</a>
+                            </li>
+                        {% endif %}
+                    {% endfor %}
+                    
+                    <!-- Paginación: si 'end' es menor que 'total_pages2', mostrar el botón para ir a la última página -->
+                    {% if end2 < total_pages2 %}
+                        {% if end2 < total_pages2 - 1 %}
+                            <li class="page-item disabled">
+                                <span class="page-link">...</span>
+                            </li>
+                        {% endif %}
+                        <li class="page-item">
+                            <a class="page-link" href="?page2={{ total_pages2 }}&section=docs">{{ total_pages2 }}</a>
+                        </li>
+                    {% endif %}
+                    
+                    <!-- Botón "Siguiente" -->
+                    {% if current_page2 < total_pages2 %}
+                        <li class="page-item">
+                            <a class="page-link" href="?page2={{ current_page2 + 1 }}&section=docs" aria-label="Siguiente">
+                                Siguiente
+                            </a>
+                        </li>
+                    {% else %}
+                        <li class="page-item disabled">
+                            <span class="page-link">Siguiente</span>
+                        </li>
+                    {% endif %}
+                </ul>
+            </nav>
+            {% else %}
+            <p>No hay documentos disponibles.</p>
+            {% endif %}
+        </section>
+    </div>
+</main>
+
+<script>
+    const initialSection = "{{ section }}";
+
+    
+    function showSection(section) {
+        document.getElementById('section-jinetes').style.display = (section === 'jinetes') ? 'block' : 'none';
+        document.getElementById('section-docs').style.display = (section === 'docs') ? 'block' : 'none';
+
+        // Actualizar el estado de los botones
+        document.getElementById('btn-jinetes').classList.toggle('btn-primary', section === 'jinetes');
+        document.getElementById('btn-jinetes').classList.toggle('btn-secondary', section !== 'jinetes');
+        document.getElementById('btn-docs').classList.toggle('btn-primary', section === 'docs');
+        document.getElementById('btn-docs').classList.toggle('btn-secondary', section !== 'docs');
+    }
+
+    document.addEventListener('DOMContentLoaded', function() {
+        showSection(initialSection);
+    });
+
+
+</script>
+
+{% endblock %}

@@ -1,0 +1,102 @@
+{% extends "layout.html"%}
+{% block title %}Agregar Documento{% endblock %}
+{% block content %}
+<h2>Documentación Complementaria</h2>
+<form action="{{ url_for('documentos.create_doc_jinete', jinete_id=id) }}" method="POST" class="form-container" enctype="multipart/form-data">
+        <div id="documentos-container">
+            <!-- Documento inicial -->
+            <div class="form-group documento-item">
+                <label for="tipo_documento_0">Tipo de Documento</label>
+                <select id="tipo_documento_0" name="tipo_documento[]" class="form-control tipo-documento" required>
+                    <option value="">Seleccione una opción</option>
+                    {% for tipo in tipos_docs %}
+                        <option value="{{ tipo.name }}">{{ tipo.value }}</option>
+                    {% endfor %}
+                </select>
+
+                <label for="documento_tipo_0">Tipo de Entrada</label>
+                <select id="documento_tipo_0" name="documento_tipo[]" class="form-control documento-tipo" onchange="toggleFileOrLink(0)" required>
+                    <option value="archivo">Archivo</option>
+                    <option value="link">Enlace</option>
+                </select>
+
+                <div class="file-input-container" id="file-input-container-0">
+                    <label for="documento_0">Adjuntar Archivo</label>
+                    <input type="file" id="documento_0" name="documentos[]" class="form-control">
+                </div>
+                <div class="link-input-container d-none" id="link-input-container-0">
+                    <label for="link_0">Ingresar Enlace</label>
+                    <input type="url" id="link_0" name="links[]" class="form-control" placeholder="Ingrese el enlace">
+                </div>
+            </div>
+        </div>
+
+        <button type="button" class="btn btn-secondary mt-2" onclick="agregarDocumento()">Agregar Otro Documento</button>
+
+        <div class="form-group mt-4">
+            <button type="submit" class="btn btn-primary">Guardar</button>
+        </div>
+    </form>
+
+    <script>
+        // Manejo de Documentos
+    let documentoIndex = 1; // Índice para documentos adicionales
+
+    function toggleFileOrLink(index) {
+        const tipoSelect = document.getElementById(`documento_tipo_${index}`);
+        const fileContainer = document.getElementById(`file-input-container-${index}`);
+        const linkContainer = document.getElementById(`link-input-container-${index}`);
+
+        if (tipoSelect.value === 'archivo') {
+            fileContainer.classList.remove('d-none');
+            linkContainer.classList.add('d-none');
+        } else if (tipoSelect.value === 'link') {
+            fileContainer.classList.add('d-none');
+            linkContainer.classList.remove('d-none');
+        }
+    }
+
+    function agregarDocumento() {
+        const documentosContainer = document.getElementById('documentos-container');
+
+        const documentoItem = document.createElement('div');
+        documentoItem.classList.add('form-group', 'documento-item', 'mt-3');
+
+        documentoItem.innerHTML = `
+            <label for="tipo_documento_${documentoIndex}">Tipo de Documento</label>
+            <select id="tipo_documento_${documentoIndex}" name="tipo_documento[]" class="form-control tipo-documento" required>
+                {% for tipo in tipos_docs %}
+                        <option value="{{ tipo.name }}">{{ tipo.value }}</option>
+                {% endfor %}
+            </select>
+
+            <label for="documento_tipo_${documentoIndex}">Tipo de Entrada</label>
+            <select id="documento_tipo_${documentoIndex}" name="documento_tipo[]" class="form-control documento-tipo" onchange="toggleFileOrLink(${documentoIndex})" required>
+                <option value="archivo">Archivo</option>
+                <option value="link">Enlace</option>
+            </select>
+
+            <div class="file-input-container" id="file-input-container-${documentoIndex}">
+                <label for="documento_${documentoIndex}">Adjuntar Archivo</label>
+                <input type="file" id="documento_${documentoIndex}" name="documentos[]" class="form-control">
+            </div>
+            <div class="link-input-container d-none" id="link-input-container-${documentoIndex}">
+                <label for="link_${documentoIndex}">Ingresar Enlace</label>
+                <input type="url" id="link_${documentoIndex}" name="links[]" class="form-control" placeholder="Ingrese el enlace">
+            </div>
+
+            <button type="button" class="btn btn-danger mt-2" onclick="eliminarDocumento(this)">Eliminar Documento</button>
+        `;
+
+        documentosContainer.appendChild(documentoItem);
+        documentoIndex++;
+    }
+
+    function eliminarDocumento(button) {
+        const documentoItem = button.parentElement;
+        documentoItem.remove();
+    }
+
+</script>
+    
+{% endblock %}

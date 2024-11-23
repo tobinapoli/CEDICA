@@ -1,0 +1,36 @@
+{% extends "layout.html" %}
+
+{% block title %}Estadísticas y Reportes{% endblock %}
+
+{% block content %}
+<body>
+    <div class="container mt-4">
+        <h2>Reporte de Propuestas de Trabajo</h2>
+        <table class="table table-bordered table-striped">
+            <thead>
+                <tr>
+                    <th>Puesto</th>
+                    <th>Propuesta</th>
+                    <th>Total Solicitudes</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for puesto, total in data %}
+                <tr>
+                    <td>{{ loop.index }}</td>
+                    <td>{{ puesto.value }}</td>
+                    <td>{{ total }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        <div class="btn-group " role="group" aria-label="Secciones">
+            <a href="{{ url_for('reportes.reporte_propuestas_pdf') }}" class="btn btn-primary">Generar PDF</a>
+        </div>
+    </div>
+
+    
+
+</body>
+</html>
+{% endblock %}

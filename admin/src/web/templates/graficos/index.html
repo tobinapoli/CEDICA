@@ -1,0 +1,20 @@
+{% extends "layout.html" %}
+
+{% block title %}Estadísticas y Reportes{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <h1 class="text-center mb-4">Estadísticas y Reportes</h1>
+    
+    <div class="btn-group d-flex justify-content-center" role="group" aria-label="Secciones">
+        <a href="{{ url_for('graficos.graficos') }}" class="btn btn-primary mx-2">Ver Gráficos</a>
+        <a href="{{ url_for('reportes.index_reportes') }}" class="btn btn-secondary mx-2">Ver Reportes</a>
+    </div>
+    
+    <div class="mt-4">
+        <p class="text-center">
+            Esta sección permite visualizar información estadística que puede ser de utilidad tanto para el personal administrativo como para los profesionales de la Institución. 
+        </p>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,114 @@
+{% extends "layout.html" %}
+
+{% block title %}Listado de Consultas{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <h1 class="mb-4">Listado de Consultas</h1>
+
+    <form method="get" action="{{ url_for('contactos.index') }}" class="mb-3">
+        <div class="row">
+            <div class="col-md-4">
+                <label for="estado" class="form-label">Filtrar por Estado:</label>
+                <select name="estado" id="estado" class="form-select">
+                    <option value="">Todos</option>
+                    <option value="pendiente" {% if estado_filtro == 'pendiente' %}selected{% endif %}>Pendiente</option>
+                    <option value="resuelto" {% if estado_filtro == 'resuelto' %}selected{% endif %}>Resuelto</option>
+                    <option value="en curso" {% if estado_filtro == 'en curso' %}selected{% endif %}>En curso</option>
+                </select>
+            </div>
+            <div class="col-md-4">
+                <label for="orden" class="form-label">Ordenar por Fecha:</label>
+                <select name="orden" id="orden" class="form-select">
+                    <option value="asc" {% if orden == 'asc' %}selected{% endif %}>Ascendente</option>
+                    <option value="desc" {% if orden == 'desc' %}selected{% endif %}>Descendente</option>
+                </select>
+            </div>
+            <div class="col-md-2 d-flex align-items-end">
+                <button type="submit" class="btn btn-primary">Aplicar Filtros</button>
+            </div>
+        </div>
+    </form>
+
+    <table class="table-responsive table-bordered">
+        <thead class="table-light">
+            <tr>
+                <th>ID</th>
+                <th>Nombre</th>
+                <th>Estado</th>
+                <th>Fecha</th>
+                <th>Acciones</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for consulta in consultas %}
+            <tr>
+                <td>{{ consulta.id }}</td>
+                <td>{{ consulta.nombrecompleto }}</td>
+                <td>{{ consulta.estado }}</td>
+                <td>{{ consulta.created_at.strftime('%d/%m/%Y') }}</td>
+                <td>
+                    <a href="{{ url_for('contactos.show', id=consulta.id) }}" class="btn btn-info btn-sm">Ver</a>
+                    <a href="{{ url_for('contactos.update', id=consulta.id) }}" class="btn btn-warning btn-sm">Editar</a>
+                    <form action="{{ url_for('contactos.delete', id=consulta.id) }}" method="POST" style="display:inline-block;">
+                        <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('¿Estás seguro que deseas eliminar esta consulta?');" aria-label="Eliminar consulta">Eliminar</button>
+                    </form>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <nav aria-label="Paginación de consultas">
+        <ul class="pagination">
+            {% if page > 1 %}
+                <li class="page-item">
+                    <a class="page-link" href="?page={{ page - 1 }}&estado={{ estado_filtro }}&orden={{ orden }}" aria-label="Anterior">Anterior</a>
+                </li>
+            {% else %}
+                <li class="page-item disabled">
+                    <span class="page-link" aria-hidden="true">Anterior</span>
+                </li>
+            {% endif %}
+    
+            {% if start > 1 %}
+                <li class="page-item">
+                    <a class="page-link" href="?page=1&estado={{ estado_filtro }}&orden={{ orden }}">1</a>
+                </li>
+                {% if start > 2 %}
+                    <li class="page-item disabled">
+                        <span class="page-link">...</span>
+                    </li>
+                {% endif %}
+            {% endif %}
+    
+            {% for p in range(start, end + 1) %}
+                <li class="page-item {% if p == page %}active{% endif %}">
+                    <a class="page-link" href="?page={{ p }}&estado={{ estado_filtro }}&orden={{ orden }}" aria-label="Página {{ p }}">{{ p }}</a>
+                </li>
+            {% endfor %}
+    
+            {% if end < total_pages %}
+                {% if end < total_pages - 1 %}
+                    <li class="page-item disabled">
+                        <span class="page-link">...</span>
+                    </li>
+                {% endif %}
+                <li class="page-item">
+                    <a class="page-link" href="?page={{ total_pages }}&estado={{ estado_filtro }}&orden={{ orden }}">{{ total_pages }}</a>
+                </li>
+            {% endif %}
+
+            {% if page < total_pages %}
+                <li class="page-item">
+                    <a class="page-link" href="?page={{ page + 1 }}&estado={{ estado_filtro }}&orden={{ orden }}" aria-label="Siguiente">Siguiente</a>
+                </li>
+            {% else %}
+                <li class="page-item disabled">
+                    <span class="page-link" aria-hidden="true">Siguiente</span>
+                </li>
+            {% endif %}
+        </ul>
+    </nav>
+</div>
+{% endblock %}

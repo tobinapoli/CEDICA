@@ -1,0 +1,52 @@
+{% extends "layout.html" %}
+
+{% block title %}Detalles del Usuario{% endblock %}
+
+{% block content %}
+    <div class="container">
+        <h1 class="text-center mb-4">Detalles del Usuario</h1>
+
+        <div class="row">
+            <div class="col-md-8">
+                <h2>Datos del Usuario</h2>
+                <table class="table-responsive table-bordered" aria-label="Tabla de detalles del usuario">
+                    <tr>
+                        <th>ID:</th>
+                        <td>{{ user.id }}</td>
+                    </tr>
+                    <tr>
+                        <th>Alias:</th>
+                        <td>{{ user.alias }}</td>
+                    </tr>
+                    <tr>
+                        <th>Email:</th>
+                        <td>{{ user.email }}</td>
+                    </tr>
+                    <tr>
+                        <th>Rol:</th>
+                        <td>{{ rol.nombre }}</td>  
+                    </tr>
+                    <tr>
+                        <th>Activo:</th>
+                        <td aria-live="polite">{{ "✔️" if user.activo else "❌" }}</td>
+                    </tr>
+                    <tr>
+                        <th> Registro Aprobado:</th>
+                        <td aria-live="polite">{{ "✔️" if user.registroAprobado else "❌" }}</td>
+                    <tr>
+                        <th>Fecha de Creación:</th>
+                        <td>{{ user.created_at }}</td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+
+        <div class="actions mt-4" aria-label="Acciones de usuario">
+            <a href="{{ url_for('user.update', user_id=user.id) }}" class="btn btn-primary" aria-label="Editar usuario">Editar</a>
+            <form action="{{ url_for('user.delete', user_id=user.id) }}" method="POST" style="display:inline;">
+                <button type="submit" class="btn btn-danger btn-sm" aria-label="Eliminar usuario" onclick="return confirm('¿Estás seguro que deseas eliminar este usuario?');">Eliminar</button>
+            </form>
+            <a href="{{ url_for('user.index') }}" class="btn btn-secondary" aria-label="Volver a la lista de usuarios">Volver</a>
+        </div>
+    </div>
+{% endblock %}

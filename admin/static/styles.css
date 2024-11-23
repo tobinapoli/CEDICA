@@ -1,0 +1,469 @@
+/* General styles */
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    
+}
+
+header {
+    background-color: #cccccc;
+    border-bottom: 1px solid #cccccc;
+}
+
+
+
+.logo img {
+    width: 100px; /* Ajusta el tamaño del logo */
+    height: auto; /* Mantén la proporción de la imagen */
+}
+
+.menu {
+    list-style-type: none;
+    display: flex;  
+    display: flex;  
+    margin: 0;
+    padding: 0;
+    width: 100%;
+}
+
+.centered-menu {
+    display: flex;
+    justify-content: center;
+    flex-grow: 1;
+    display: flex;
+    margin: 0;
+    padding: 0;
+    width: 100%;
+}
+
+.centered-menu {
+    display: flex;
+    justify-content: center;
+    flex-grow: 1;
+    gap: 15px;
+}
+
+.menu li {
+    display: inline;
+}
+
+.menu a {
+    padding: 10px 20px;
+    background-color: #a3c3ff;
+    border-radius: 5px;
+    text-decoration: none;
+    color: black;
+    font-weight: bold;
+}
+
+.profile .dropdown a {
+    background-color: #cccccc;  
+    color: #333; 
+    font-weight: bold;
+    padding: 8px 16px; 
+    border-radius: 3px; 
+}
+
+.profile .dropdown a:hover {
+    background-color: #cccccc; 
+}
+
+.menu a:hover {
+    background-color: #cccccc;
+}
+
+.profile {
+    position: relative;
+    display: inline-block;
+}
+
+.perfilDropdown a {
+    text-decoration: none; /* Elimina el subrayado */
+    color: inherit; /* Inherit color from parent element */
+}
+
+.perfilDropdown a:hover {
+    background-color: #cccccc; /* Elimina el fondo azul del enlace */
+}
+
+.perfilDropdown img {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    cursor: pointer;
+}
+
+.perfilDropdown:hover img {
+    background-color: #cccccc; /* El color al pasar el mouse por encima */
+}
+
+.perfilDropdown img:hover {
+    background-color: #cccccc; /* Cambia esto por el color que desees */
+    border-radius: 50%; /* Mantener el borde redondeado, si es necesario */
+    transition: background-color 0.3s ease; /* Transición suave */
+}
+
+.form-login h1 {
+    font-weight: bold;
+    padding: 20px;
+    text-align: center;
+    justify-content: center;
+}
+
+.form-login {
+    background-color: #f0f0f0;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    max-width: 600px;
+    min-height: 400px; 
+    display: flex; 
+    flex-direction: column; 
+    justify-content: center; 
+    margin: 60px auto 20px auto; 
+}
+
+.form-login input {
+    border: 2px solid #007bff;
+    border-radius: 5px;
+    padding: 10px;
+    margin-bottom: 15px;
+}
+
+.form-login button {
+    background-color: #7fa9ff;
+    color: white;
+    border-radius: 5px;
+    padding: 10px 20px;
+    border: none;
+}
+
+.form-login button:hover {
+    background-color: #96aedf;
+}
+
+
+.position-relative {
+    position: relative; 
+}
+
+.toggle-password {
+    position: absolute; 
+    right: 10px; 
+    top: 45%; 
+    transform: translateY(-50%); 
+    cursor: pointer; 
+}
+
+.toggle-password i {
+    background: none; 
+    border: none; 
+    color: #000; 
+    font-size: 1.5rem; 
+}
+/* Estilos de la barra de navegación */
+nav {
+    display: flex;
+    justify-content: center; /* Centra los botones horizontalmente */
+}
+
+nav ul {
+    list-style: none; /* Elimina los puntos de la lista */
+    padding: 0; /* Elimina el padding */
+    margin: 0; /* Elimina el margen */
+    display: flex; /* Hace que los elementos de la lista se alineen horizontalmente */
+}
+
+nav li {
+    margin: 0 15px; /* Espaciado entre botones */
+}
+
+nav a {
+    color: white; /* Color del texto del botón */
+    padding: 10px 15px; /* Espaciado interno del botón */
+    text-decoration: none; /* Elimina el subrayado del enlace */
+    border-radius: 5px; /* Bordes redondeados */
+    transition: background-color 0.3s; /* Transición suave al cambiar el color */
+}
+
+nav a:hover {
+    background-color: #0056b3; /* Color de fondo al pasar el ratón */
+}
+
+.navbar-light.bg-light {
+    background-color: #cccccc !important; /* Color de fondo de la barra de navegación */
+}
+
+/* Estilos generales del formulario */
+form.form-container {
+    background-color: white;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    max-width: 800px;
+    margin: 20px auto; /* Centra el formulario */
+}
+
+form h2 {
+    margin-top: 20px;
+    font-size: 1.5em;
+    color: #35495f;
+}
+
+.form-group {
+    margin-bottom: 15px;
+}
+
+.form-group label {
+    font-weight: bold;
+    display: block;
+    margin-bottom: 5px;
+    color: #333;
+}
+
+.form-group input,
+.form-group select {
+    width: 100%;
+    padding: 10px;
+    font-size: 1em;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-sizing: border-box;
+}
+
+.form-group input:focus,
+.form-group select:focus {
+    border-color: #007bff;
+    outline: none;
+}
+
+.btn-primary {
+    background-color: #007bff;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.btn-primary:hover {
+    background-color: #0056b3;
+}
+
+/* Estilo específico para las secciones de datos */
+h2 {
+    font-size: 1.8em;
+    border-bottom: 2px solid #ddd;
+    padding-bottom: 5px;
+    margin-bottom: 20px;
+}
+
+/* Ajuste de inputs más pequeños */
+.form-group input[type="date"],
+.form-group input[type="text"] {
+    max-width: 100%;
+}
+
+.employee-details {
+    margin-bottom: 20px;
+}
+
+.details-section {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 20px;
+}
+
+.detail {
+    width: 48%; /* Ocupa aproximadamente la mitad del espacio */
+}
+
+.detail h2 {
+    margin-bottom: 10px;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px; /* Añadir margen superior */
+}
+
+table th, table td {
+    padding: 8px;
+    text-align: left;
+}
+
+table th {
+    width: 40%;
+    background-color: #7b7c7e; /* Color de fondo del encabezado */
+    color: white; /* Color de texto del encabezado */
+}
+
+table tr:nth-child(even) {
+    background-color: #f2f2f2; /* Color de fondo alternativo */
+}
+
+.actions {
+    margin-top: 20px;
+}
+
+.actions a, .actions button {
+    margin-right: 10px;
+}
+
+
+/* Estilo para los filtros y ordenamiento */
+#filtros, #ordenar {
+    display: flex;
+    flex-wrap: wrap; /* Permitir que los elementos se envuelvan en líneas */
+    gap: 15px; /* Espaciado entre los elementos */
+    margin-bottom: 20px; /* Espaciado inferior */
+}
+
+#filtros div, #ordenar div {
+    flex: 1; /* Permitir que los elementos crezcan */
+    min-width: 250px; /* Ancho mínimo para cada campo */
+}
+
+
+.title-container {
+    text-align: center; /* Centra el texto del título */
+    margin-bottom: 20px; /* Espacio debajo del título */
+    padding: 0; /* Elimina el relleno */
+}
+
+.title-container h1 {
+    margin: 0; /* Elimina el margen por defecto del h1 */
+}
+.table {
+    table-layout: fixed;
+    width: 100%;
+}
+
+.th, .td {
+    width: auto; /* Hace que el ancho se distribuya de manera uniforme */
+    word-wrap: break-word; /* Ajusta el contenido si es muy largo */
+    text-align: center; /* Opcional, alinea el contenido al centro */
+}
+th a {
+    color: black;
+    text-decoration: none;
+}
+
+th a:hover {
+    text-decoration: underline;
+}
+
+
+/* Estilos para la tabla de empleados */
+
+
+#observaciones {
+    resize: none; /* Evita el redimensionamiento */
+    height: 100px; /* Altura fija, ajusta según sea necesario */
+}
+
+.input-group {
+    display: flex;
+    align-items: center;
+}
+
+#clearDate {
+    margin-left: 5px; /* Espaciado entre el campo de fecha y la cruz */
+    font-size: 20px; /* Ajusta el tamaño de la cruz */
+    line-height: 1; /* Alinea verticalmente la cruz */
+}
+
+.entrenadores-list {
+    display: flex;
+    gap: 10px;
+    list-style-type: none;
+    padding: 0;
+}
+
+.entrenadores-list li {
+    background-color: #f0f0f0;
+    padding: 5px 10px;
+    border-radius: 5px;
+    display: flex;
+    align-items: center;
+    position: relative;
+}
+
+.entrenadores-list li button {
+    background: none;
+    border: none;
+    color: black;
+    font-size: 12px;
+    margin-left: 10px;
+    cursor: pointer;
+}
+
+.entrenadores-list li button:hover {
+    color: red;
+}
+
+.entrenadores-list li .text-muted {
+    color: #888;
+}
+
+
+.form-group select {
+    width: 100%; 
+    padding: 10px;
+    font-size: 1em;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-sizing: border-box; 
+}
+
+.pagination {
+    margin-top: 2%;
+}
+
+.pagination .page-item {
+    margin: 0 5px; /* Reduce el espaciado horizontal */
+}
+
+
+.confirmation-section {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    background-color: #f7f7f7;
+}
+
+.confirmation-container {
+    text-align: center;
+    background-color: #fff;
+    padding: 2rem;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.confirmation-container h1 {
+    font-size: 2rem;
+    color: #333;
+    margin-bottom: 1rem;
+}
+
+.confirmation-container p {
+    font-size: 1rem;
+    color: #666;
+    margin-bottom: 1.5rem;
+}
+
+.button-group {
+    margin-top: 1rem;
+}
+
+.button-group .btn {
+    width: 100%; /* Hace que ambos botones tengan el mismo ancho */
+    padding: 10px 20px;
+}
+.btn:hover {
+    background-color: #0056b3;
+}

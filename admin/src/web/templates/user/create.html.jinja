@@ -1,0 +1,96 @@
+{% extends "layout.html" %}
+
+{% block title %}Crear Usuario{% endblock %}
+
+{% block content %}
+<h1 style="text-align: center;">Crear Nuevo Usuario</h1>
+
+<form method="POST" action="{{ url_for('user.create') }}" class="form-container" onsubmit="return validarFormulario()"> 
+    {{ form.hidden_tag() }}  
+
+    <h2>Datos del Usuario</h2>
+
+    <div class="form-group">
+        {{ form.email.label }}
+        {{ form.email(class="form-control", aria_label="Email del usuario") }}
+        {% if form.email.errors %}
+            <span class="text-danger">{{ form.email.errors[0] }}</span>
+        {% endif %}
+        <span id="email-error"></span>
+    </div>
+
+    <div class="form-group">
+        {{ form.alias.label }}
+        {{ form.alias(class="form-control", aria_label="Alias del usuario") }}
+        {% if form.alias.errors %}
+            <span class="text-danger">{{ form.alias.errors[0] }}</span>
+        {% endif %}
+        <span id="alias-error"></span>
+    </div>
+
+    <div class="form-group">
+        {{ form.password.label }}
+        {{ form.password(class="form-control") }}
+        {% if form.password.errors %}
+            <span class="text-danger">{{ form.password.errors[0] }}</span>
+        {% endif %}
+        <span id="password-error"></span>
+    </div>
+
+    <div class="form-group">
+        {{ form.rol_id.label }}
+        {{ form.rol_id(class="form-control", aria_label="Rol del usuario") }}
+        {% if form.rol_id.errors %}
+            <span class="text-danger">{{ form.rol_id.errors[0] }}</span>
+        {% endif %}
+        <span id="rol-error"></span>
+    </div>
+
+    <div class="form-group">
+        <button type="submit" id="submit-button" class="btn btn-primary" >Crear Usuario</button> 
+    </div>
+</form>
+<script type="module"> 
+
+    import { check_email } from "{{ url_for('static', filename='js/user/check/check_email.js') }}";
+    import { check_alias } from "{{ url_for('static', filename='js/user/check/check_alias.js') }}";
+    import { check_password } from "{{ url_for('static', filename='js/user/check/check_password.js') }}";
+    import { check_role } from "{{ url_for('static', filename='js/user/check/check_role.js') }}";
+    import { toggle_create_user_button } from "{{ url_for('static', filename='js/user/toggle/toggle_create_user_button.js') }}";
+
+    // Selección de elementos del DOM
+    const emailInput = document.getElementById('email');
+    const aliasInput = document.getElementById('alias');
+    const passwordInput = document.getElementById('password');
+    const roleInput = document.getElementById('rol_id');
+
+    // Agregar eventos a los inputs
+    emailInput.addEventListener('input', () => {
+        check_email(); 
+        toggle_create_user_button(); 
+    });
+
+    aliasInput.addEventListener('input', () => {
+        check_alias();
+        toggle_create_user_button(); 
+    });
+
+    passwordInput.addEventListener('input', () => {
+        check_password(); 
+        toggle_create_user_button(); 
+    });
+
+    roleInput.addEventListener('input', () => {
+        check_role(); 
+        toggle_create_user_button(); 
+    });
+
+    
+
+
+    // Inicializar el estado del botón de crear usuario
+    toggle_create_user_button(); 
+</script>
+
+{% endblock %}
+

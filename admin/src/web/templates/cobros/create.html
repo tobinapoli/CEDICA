@@ -1,0 +1,76 @@
+{% extends 'layout.html' %}
+
+{% block content %}
+<form action="{{ url_for('cobro.create') }}" method="POST" class="form-container" aria-labelledby="form-header">
+    <h1 id="form-header" style="text-align: center;">Registrar Cobro</h1>
+
+    <div class="form-group">
+        <label for="fecha">Fecha de Pago:</label>
+        <div class="input-group">
+            <input type="date" class="form-control" id="fecha" name="fecha" value="{{ form_data.get('fecha', '') }}" required min="1994-01-01" max="{{ current_date }}" aria-describedby="fecha-help">
+        </div>
+        <small id="fecha-help" class="form-text text-muted">Seleccione una fecha válida entre 1994-01-01 y hoy.</small>
+        {% if errors.get('fecha') %}
+            <small class="text-danger" role="alert">{{ errors['fecha'] }}</small>
+        {% endif %}
+    </div>
+
+    <div class="form-group">
+        <label for="monto">Monto:</label>
+        <input type="number" class="form-control" id="monto" name="monto" placeholder="$ ARS" value="{{ form_data.get('monto', '') }}" required aria-describedby="monto-help">
+        <small id="monto-help" class="form-text text-muted">Ingrese el monto del cobro en pesos argentinos.</small>
+        {% if errors.get('monto') %}
+            <small class="text-danger" role="alert">{{ errors['monto'] }}</small>
+        {% endif %}
+    </div>
+
+    <div class="form-group">
+        <label for="medio_de_pago">Medio de Pago:</label>
+        <select id="medio_de_pago" name="medio_de_pago" class="form-control" required aria-label="Seleccionar medio de pago">
+            <option value="">-- Seleccione un Medio de Pago --</option>
+            {% for medio in medio_de_pago %}
+                <option value="{{ medio.id }}" {% if form_data.get('medio_de_pago') == medio.id %}selected{% endif %}>
+                    {{ medio.nombre }}
+                </option>
+            {% endfor %}
+        </select>
+    </div>
+
+    <div class="form-group">
+        <label for="jinetes">Jinete/Amazona:</label>
+        <select id="jinetes" name="jinetes" class="form-control" required aria-label="Seleccionar jinete o amazona">
+            <option value="">-- Seleccione un J&A --</option>
+            {% for jinete in jinetes %}
+                <option value="{{ jinete.id }}" {% if form_data.get('jinetes') == jinete.id %}selected{% endif %}>
+                    {{ jinete.nombre }} {{ jinete.apellido }}, DNI: {{ jinete.dni }}
+                </option>
+            {% endfor %}
+        </select>
+    </div>
+
+    <div class="form-group">
+        <label for="empleado">Empleado:</label>
+        <select id="empleado" name="empleado_id" class="form-control" required aria-label="Seleccionar empleado">
+            <option value="">-- Seleccione un Empleado --</option>
+            {% for empleado in empleados %}
+                <option value="{{ empleado.id }}" {% if form_data.get('empleado_id') == empleado.id %}selected{% endif %}>
+                    {{ empleado.nombre }} {{ empleado.apellido }}, DNI: {{ empleado.dni }}
+                </option>
+            {% endfor %}
+        </select>
+    </div>
+
+    <div class="form-group">
+        <label for="observaciones">Observaciones:</label>
+        <textarea class="form-control" id="observaciones" name="observaciones" rows="3" maxlength="50" aria-describedby="observaciones-help" aria-label="Escribir observaciones"></textarea>
+        <small id="charCount" class="text-muted">0/50</small>
+        <small id="observaciones-help" class="form-text text-muted">Máximo 50 caracteres.</small>
+    </div>
+
+    <button type="submit" class="btn btn-primary" name="continuar" value="0" aria-label="Crear cobro">Crear cobro</button>
+    <button type="submit" class="btn btn-secondary" name="continuar" value="1" aria-label="Crear cobro y continuar">Crear y continuar</button>
+</form>
+
+<script src="{{ url_for('static', filename='js/choice_selector.js') }}"></script>
+<script src="{{ url_for('static', filename='js/create_cobro_validaciones.js') }}"></script>
+{% endblock %}

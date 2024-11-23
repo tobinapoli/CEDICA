@@ -1,0 +1,99 @@
+{% extends "layout.html" %}
+
+{% block title %} {{ contenido.titulo }} {% endblock %}
+
+{% block content %}
+    <div class="container">
+        <h1 class="text-center mb-4">Detalles del Contenido</h1>
+
+        <div class="row">
+            <div class="col-md-8">
+                <h2>Información del Contenido</h2>
+                <table class="table table-bordered" aria-label="Tabla de detalles del contenido">
+                    <tr>
+                        <th>Titulo:</th>
+                        <td>{{ contenido.titulo }}</td>
+                    </tr>
+                    <tr>
+                        <th>Autor:</th>
+                        <td>{{ contenido.autor.alias }}</td>
+                    </tr>
+                    <tr>
+                        <th>Fecha de Creación:</th>
+                        <td>{{ contenido.created_at.strftime('%d-%m-%Y') }}</td>
+                    </tr>
+                    <tr>
+                        <th>Fecha de Modificación:</th>
+                        <td>{{ contenido.updated_at.strftime('%d-%m-%Y') }}</td>
+                    </tr>
+                    <tr>
+                        <th>Fecha de Publicación:</th>
+                        <td>{{ contenido.fecha_publicacion.strftime('%d-%m-%Y') if contenido.fecha_publicacion else 'Este contenido no fue publicado' }}</td>
+                    </tr>
+                    <tr>
+                        <th>Estado:</th>
+                        <td>{{ contenido.estado.value }}</td>
+                    </tr>
+                </table>
+            </div>
+             <!-- Sección de Acciones -->
+             <div class="col-md-4">
+                <h2>Acciones</h2>
+                <ul class="list-unstyled">
+                    <li>
+                        <a class="btn btn-info mb-2" href="{{ url_for('contenido.update', id=contenido.id) }}">Editar</a>
+                    </li>
+                    <li>
+                        <form action="{{ url_for('contenido.delete', id=contenido.id) }}" method="POST" onsubmit="return confirm('¿Estás seguro que deseas eliminar este contenido?');">
+                            <button type="submit" class="btn btn-danger mb-2" aria-label="Eliminar este contenido">Eliminar</button>
+                        </form>
+                        
+                    </li>
+                    <li>
+                        <a href="{{ url_for('contenido.index') }}" class="btn btn-secondary mb-2" aria-label="Volver a la lista de contenido">Volver</a>
+                    </li>
+                    {% if contenido.estado.value == 'Publicado' %}
+                        <li>
+                            <form action="{{ url_for('contenido.archivar', id=contenido.id) }}" method="POST" onsubmit="return confirm('¿Estás seguro que deseas archivar este contenido?');">
+                                <button type="submit" class="btn btn-warning mb-2" aria-label="Archivar este contenido">Archivar</button>
+                            </form>
+                        </li>
+                    {% elif contenido.estado.value == 'Archivado' %}
+                        <li>
+                            <form action="{{ url_for('contenido.publicar', id=contenido.id) }}" method="POST" onsubmit="return confirm('¿Estás seguro que deseas publicar este contenido?');">
+                                <button type="submit" class="btn btn-success mb-2" aria-label="Publicar este contenido">Publicar</button>
+                            </form>
+                        </li>
+                           
+                    {% else %}
+                    <li>
+                        <form action="{{ url_for('contenido.publicar', id=contenido.id) }}" method="POST" onsubmit="return confirm('¿Estás seguro que deseas publicar este contenido?');">
+                            <button type="submit" class="btn btn-success mb-2" aria-label="Publicar este contenido">Publicar</button>
+                        </form>
+                    </li>
+                        <li>
+                            <form action="{{ url_for('contenido.archivar', id=contenido.id) }}" method="POST" onsubmit="return confirm('¿Estás seguro que deseas archivar este contenido?');">
+                                <button type="submit" class="btn btn-warning mb-2" aria-label="Archivar este contenido">Archivar</button>
+                            </form>
+                        </li>
+                    {% endif %}
+                </ul>
+            </div>
+
+                <h2>Copete</h2>
+                <!-- Mostrar el contenido del copete con el formato enriquecido -->
+                <div class="border p-3 mb-4" style="background-color: #f9f9f9;">
+                    {{ contenido.copete | safe }}
+                </div>
+
+                <h2>Cuerpo del Contenido</h2>
+                <!-- Mostrar el contenido del cuerpo con el formato enriquecido -->
+                <div class="border p-3" style="background-color: #f9f9f9;">
+                    {{ contenido.contenido | safe }}
+                </div>
+            
+
+           
+        </div>
+    </div>
+{% endblock %}
