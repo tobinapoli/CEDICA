@@ -7,7 +7,7 @@
 
 ## 📋 **Project Details**
 
-- **Project Name**: Software Project 2024 - Integrative Work (TI)
+- **Project Name**: Proyecto de Software 2024 - Trabajo Integrador
 - **Main Technologies**:
   - **Python** (Flask for backend)
   - **Vue.js** (Frontend for the public portal)
