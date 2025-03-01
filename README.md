@@ -19,7 +19,7 @@
 
 ## 📝 **Project Description**
 
-The project involves the development of a **Web Application** for the **Center for Equine Therapy for People with Disabilities and Underprivileged Individuals (CEDICA)**, a non-profit civil association that uses horse-assisted therapies to improve the quality of life for people with disabilities.
+The project involves the development of a **Web Application** for **CEDICA (Centro de Equitación para Personas con Discapacidad y Carenciadas)**, a non-profit civil association that uses horse-assisted therapies to improve the quality of life for people with disabilities.
 
 The application is designed to manage information about **Riders and Amazons (R&A)**, **team professionals**, **horses**, and **payment and billing records**. Additionally, it includes a **public portal** to showcase the services offered by the institution.
 
