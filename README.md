@@ -1,111 +1,108 @@
 <h1 align="center">
-  Proyecto CEDICA
+  CEDICA Project
 </h1>
 
 <br/>
 <br/>
 
+## 📋 **Project Details**
 
-## 📋 **Detalles del Proyecto**
-
-- **Nombre del Proyecto**: Proyecto de Software 2024 - Trabajo Integrador (TI)
-- **Tecnologías Principales**:
-  -  **Python** (Flask para el backend)
-  -  **Vue.js** (Frontend para el portal público)
-  -  **PostgreSQL** (Base de datos)
-  -  **HTML5, CSS3, JavaScript** (Interfaz de usuario)
-
-<br/>
-<br/>
-
-## 📝 **Descripción del Proyecto**
-
-El proyecto consiste en el desarrollo de una **Aplicación Web** para el **Centro de Equitación para Personas con Discapacidad y Carenciadas (CEDICA)**, una asociación civil sin fines de lucro que utiliza terapias asistidas con caballos para mejorar la calidad de vida de personas con discapacidad.
-
-La aplicación está diseñada para gestionar la información de los **Jinetes y Amazonas (J&A)**, los **profesionales del equipo**, los **caballos**, y los **registros de pagos y cobros**. Además, cuenta con un **portal público** para mostrar los servicios ofrecidos por la institución.
+- **Project Name**: Software Project 2024 - Integrative Work (TI)
+- **Main Technologies**:
+  - **Python** (Flask for backend)
+  - **Vue.js** (Frontend for the public portal)
+  - **PostgreSQL** (Database)
+  - **HTML5, CSS3, JavaScript** (User interface)
 
 <br/>
-
-## 🛠️ **Funcionalidades Principales**
-
-### **Aplicación Privada (Flask)**
-- **Módulo de Usuarios**: CRUD de usuarios, gestión de roles y permisos.
-- **Módulo de Equipo**: Registro de empleados, documentación asociada y gestión de pagos.
-- **Módulo J&A**: Gestión de legajos de jinetes y amazonas, documentación complementaria y registros de cobros.
-- **Módulo Ecuestre**: Gestión de caballos, documentación asociada y asignación de entrenadores.
-- **Registro de Pagos y Cobros**: Registro de transacciones financieras relacionadas con empleados y J&A.
-- **Módulo de Administración de Contenido**: Gestión de publicaciones para el portal público (artículos, noticias, eventos).
-- **Módulo de Reportes**: Visualización de estadísticas y gráficos sobre datos de la institución.
-- **Módulo de Contacto**: Gestión de consultas recibidas desde el portal público.
-- **Autenticación con Google**: Registro y autenticación de usuarios mediante Google.
-
-### **Portal Público (Vue.js)**
-- **Home**: Información general sobre la institución y sus actividades.
-- **Contacto**: Formulario para enviar consultas al equipo de CEDICA.
-- **Actividades y Noticias**: Visualización de publicaciones y eventos cargados desde la aplicación privada.
 <br/>
 
+## 📝 **Project Description**
+
+The project involves the development of a **Web Application** for the **Center for Equine Therapy for People with Disabilities and Underprivileged Individuals (CEDICA)**, a non-profit civil association that uses horse-assisted therapies to improve the quality of life for people with disabilities.
+
+The application is designed to manage information about **Riders and Amazons (R&A)**, **team professionals**, **horses**, and **payment and billing records**. Additionally, it includes a **public portal** to showcase the services offered by the institution.
 
 <br/>
 
-## 📊 **Estructura del Proyecto**
+## 🛠️ **Key Features**
 
-- **Backend**: Desarrollado en Python con Flask. Incluye la lógica de negocio, la API REST y la conexión con la base de datos PostgreSQL.
-- **Frontend**: Desarrollado en Vue.js para el portal público. Interactúa con el backend mediante una API.
-- **Base de Datos**: PostgreSQL para almacenar toda la información de la aplicación.
-- **Autenticación**: Sistema de login y manejo de sesiones implementado desde cero (sin librerías externas como Flask-Login).
+### **Private Application (Flask)**
+- **User Module**: CRUD for users, role and permission management.
+- **Team Module**: Employee registration, associated documentation, and payment management.
+- **R&A Module**: Management of rider and amazon records, supplementary documentation, and billing records.
+- **Equestrian Module**: Horse management, associated documentation, and trainer assignments.
+- **Payment and Billing Records**: Recording financial transactions related to employees and R&A.
+- **Content Management Module**: Management of publications for the public portal (articles, news, events).
+- **Reports Module**: Visualization of statistics and charts about institutional data.
+- **Contact Module**: Management of inquiries received from the public portal.
+- **Google Authentication**: User registration and authentication via Google.
+
+### **Public Portal (Vue.js)**
+- **Home**: General information about the institution and its activities.
+- **Contact**: Form to send inquiries to the CEDICA team.
+- **Activities and News**: Display of publications and events loaded from the private application.
 
 <br/>
 
-<h2>📂 Instalación y Uso</h2>
+## 📊 **Project Structure**
 
-<h3>Requisitos Previos</h3>
+- **Backend**: Developed in Python with Flask. Includes business logic, REST API, and connection to the PostgreSQL database.
+- **Frontend**: Developed in Vue.js for the public portal. Interacts with the backend via an API.
+- **Database**: PostgreSQL to store all application data.
+- **Authentication**: Login and session management system implemented from scratch (without external libraries like Flask-Login).
+
+<br/>
+
+<h2>📂 Installation and Usage</h2>
+
+<h3>Prerequisites</h3>
 <ul>
-  <li>Python 3.12 o superior.</li>
-  <li>Node.js (para el frontend con Vue.js).</li>
+  <li>Python 3.12 or higher.</li>
+  <li>Node.js (for the Vue.js frontend).</li>
   <li>PostgreSQL 16.</li>
-  <li>Git (para clonar el repositorio).</li>
+  <li>Git (to clone the repository).</li>
 </ul>
 
-<h3>Pasos para la Instalación</h3>
+<h3>Installation Steps</h3>
 
 <ol>
   <li>
-    <strong>Clonar el repositorio:</strong>
+    <strong>Clone the repository:</strong>
     <pre><code>git clone https://github.com/tobinapoli/CEDICA.git
 cd CEDICA</code></pre>
   </li>
 
   <li>
-    <strong>Configurar el entorno virtual (Python):</strong>
+    <strong>Set up the virtual environment (Python):</strong>
     <pre><code>python -m venv venv
-source venv/bin/activate  # En Windows: venv\Scripts\activate</code></pre>
+source venv/bin/activate  # On Windows: venv\Scripts\activate</code></pre>
   </li>
 
   <li>
-    <strong>Instalar dependencias del backend:</strong>
+    <strong>Install backend dependencies:</strong>
     <pre><code>pip install -r requirements.txt</code></pre>
   </li>
 
   <li>
-    <strong>Configurar la base de datos:</strong>
+    <strong>Set up the database:</strong>
     <ul>
-      <li>Crear una base de datos en PostgreSQL.</li>
-      <li>Configurar las credenciales en el archivo <code>config.py</code>.</li>
-      <li>Ejecutar las migraciones:
+      <li>Create a database in PostgreSQL.</li>
+      <li>Configure credentials in the <code>config.py</code> file.</li>
+      <li>Run migrations:
         <pre><code>flask db upgrade</code></pre>
       </li>
     </ul>
   </li>
 
   <li>
-    <strong>Instalar dependencias del frontend:</strong>
+    <strong>Install frontend dependencies:</strong>
     <pre><code>cd portal
 npm install</code></pre>
   </li>
 
   <li>
-    <strong>Ejecutar la aplicación:</strong>
+    <strong>Run the application:</strong>
     <ul>
       <li><strong>Backend (Flask):</strong>
         <pre><code>flask run </code></pre>
@@ -117,10 +114,10 @@ npm install</code></pre>
   </li>
 
   <li>
-    <strong>Acceder a la aplicación:</strong>
+    <strong>Access the application:</strong>
     <ul>
-      <li><strong>Aplicación Privada:</strong> <code>http://localhost:5000</code></li>
-      <li><strong>Portal Público:</strong> <code>http://localhost:8080</code></li>
+      <li><strong>Private Application:</strong> <code>http://localhost:5000</code></li>
+      <li><strong>Public Portal:</strong> <code>http://localhost:8080</code></li>
     </ul>
   </li>
 </ol>
